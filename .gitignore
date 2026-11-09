@@ -1,11 +1,16 @@
 __pycache__/
+*.py[cod]
 *.egg-info
 
 .vscode
+.pixi/
+.venv/
 *.npy
 
 debug*
 output*
 assets/object
+dataset/
+third_party/sharpa-urdf-usd-xml/
 MUJOCO_LOG.TXT
 task/

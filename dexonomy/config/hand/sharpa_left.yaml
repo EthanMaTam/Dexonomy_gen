@@ -1,0 +1,3 @@
+xml_path: third_party/sharpa-urdf-usd-xml/wave_01/left_sharpa_wave/left_sharpa_wave.xml
+color: [0.2, 0.7, 0.9, 1.0]
+arm_hand:
