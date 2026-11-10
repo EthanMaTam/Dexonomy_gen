@@ -100,11 +100,16 @@ def main():
     parser.add_argument("--workers", type=int, default=4)
     parser.add_argument("--gpu", type=int, default=0)
     parser.add_argument("--object-limit", type=int, default=0)
+    parser.add_argument("--object-offset", type=int, default=0,
+                        help="Skip objects after deterministic shuffling, for disjoint validation")
+    parser.add_argument("--annotation-dir", help="Use alternative annotations without changing the hand library")
     parser.add_argument("--templates", nargs="+")
     parser.add_argument("--resume", action="store_true")
     args = parser.parse_args()
     if args.hours <= 0 or min(args.objects_per_shard, args.points, args.workers) <= 0:
         parser.error("Time, shard size, sampling points and workers must be positive")
+    if args.object_offset < 0 or args.object_limit < 0:
+        parser.error("Object offset and limit must be nonnegative")
     os.chdir(ROOT)
     output = args.output.resolve()
     output.mkdir(parents=True, exist_ok=True)
@@ -125,7 +130,9 @@ def main():
         hand_cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{args.hand}.yaml"))
         xml_path = hand_cfg["xml_path"].replace("${asset_root}", str(ROOT / "assets"))
         model = mujoco.MjModel.from_xml_path(str(ROOT / xml_path))
-        paths = sorted((ROOT / "assets/hand" / args.hand / "raw_anno").glob("*.yaml"))
+        annotation_dir = (Path(args.annotation_dir).resolve() if args.annotation_dir
+                          else ROOT / "assets/hand" / args.hand / "raw_anno")
+        paths = sorted(annotation_dir.glob("*.yaml"))
         if args.templates:
             paths = [p for p in paths if p.stem in args.templates]
             assert {p.stem for p in paths} == set(args.templates)
@@ -138,14 +145,20 @@ def main():
                          if p.is_dir() and all((p / "floating" / f"scale{s}.npy").is_file()
                                               for s in args.scales))
         random.Random(20261107).shuffle(objects)
+        objects = objects[args.object_offset:]
         if args.object_limit:
             objects = objects[:args.object_limit]
         assert objects
         job = {"started_at": time.time(), "deadline": time.time() + args.hours * 3600,
                "templates": [p.stem for p in paths], "objects": [str(p) for p in objects],
+               "model_sha256": hashlib.sha256(Path(xml_path).read_bytes()).hexdigest(),
                "settings": {k: v for k, v in vars(args).items() if k not in ["output", "resume"]}}
         write_json(job_path, job)
     settings = job["settings"]
+    if "model_sha256" in job:
+        hand_cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{settings['hand']}.yaml"))
+        model_path = Path(hand_cfg["xml_path"].replace("${asset_root}", str(ROOT / "assets")))
+        assert hashlib.sha256(model_path.read_bytes()).hexdigest() == job["model_sha256"], "Hand model changed since job creation"
     templates = job["templates"]
     environment = {**os.environ, "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2",
                    "MPLCONFIGDIR": "/tmp/dexonomy-matplotlib", "PYTHONUNBUFFERED": "1"}

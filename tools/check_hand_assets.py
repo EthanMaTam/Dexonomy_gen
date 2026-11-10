@@ -19,8 +19,13 @@ def main():
     parser.add_argument("--hand", required=True)
     parser.add_argument("--source-xml", type=Path)
     parser.add_argument("--report", type=Path)
+    parser.add_argument("--annotation-dir", type=Path, help="Check alternative annotations with the same hand model")
     args = parser.parse_args()
     directory = ROOT / "assets/hand" / args.hand
+    annotation_dir = args.annotation_dir if args.annotation_dir else directory / "raw_anno"
+    paths = sorted(annotation_dir.glob("*.yaml"))
+    if not paths:
+        parser.error(f"No YAML annotations found in {annotation_dir}")
     cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{args.hand}.yaml"))
     xml = ROOT / cfg["xml_path"].replace("${asset_root}", "assets")
     model = mujoco.MjModel.from_xml_path(str(xml))
@@ -31,7 +36,7 @@ def main():
     assert set(model.actuator_trnid[:, 0]) == set(range(model.njnt)), "Unactuated joints"
     env = MuJoCo_VisEnv(hand_cfg=HandCfg(str(xml)), vis_mode="collision")
     report = {"hand": args.hand, "nq": model.nq, "actuators": model.nu, "templates": []}
-    for path in sorted((directory / "raw_anno").glob("*.yaml")):
+    for path in paths:
         annotation = load_yaml(str(path))
         qpos = np.asarray(annotation["qpos"])
         assert qpos.shape == (model.nq,) and np.isfinite(qpos).all(), path

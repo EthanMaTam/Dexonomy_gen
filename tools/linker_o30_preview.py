@@ -26,11 +26,20 @@ EXPECTED_REVISION = "49f26021b0a91ff5c33150df22970c07bb548672"
 
 def prepare_model(destination: Path) -> tuple[Path, str]:
     source = MODEL_REPO / MODEL_RELATIVE
+    if not (MODEL_REPO / ".git").exists() or not source.is_file():
+        raise FileNotFoundError(
+            "O30 model submodule is missing or incomplete. Run from the project root: "
+            "git submodule update --init third_party/linkerhand-urdf"
+        )
     revision = subprocess.check_output(
         ["git", "-C", str(MODEL_REPO), "rev-parse", "HEAD"], text=True
     ).strip()
     if revision != EXPECTED_REVISION:
         raise ValueError(f"Expected model revision {EXPECTED_REVISION}, found {revision}")
+    if subprocess.check_output(
+        ["git", "-C", str(MODEL_REPO), "status", "--porcelain"], text=True
+    ).strip():
+        raise ValueError("O30 source repository has local changes; restore the pinned assets before conversion")
     robot = ET.parse(source)
     root = robot.getroot()
     joints = [joint for joint in root.findall("joint") if joint.get("type") != "fixed"]
@@ -79,7 +88,8 @@ def main() -> None:
         "## Linker Hand O30 — Right\n"
         "Official asset name: **O30i right / 0803**.\n\n"
         "MuJoCo forward-kinematics preview; sliders are joint angles in radians. "
-        "Actuator tuning and grasp validation are pending.\n\n"
+        "For the adapted actuated model and validated grasp templates, see "
+        "assets/hand/linker_o30_right/README.md.\n\n"
         "Drag to rotate; scroll to zoom.\n\n"
         f"Source revision: `{revision[:12]}`"
     )

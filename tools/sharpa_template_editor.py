@@ -96,6 +96,9 @@ class HandView:
         for geom_id in range(self.model.ngeom):
             mesh = _geom_mesh(self.model, geom_id)
             if self.model.geom_contype[geom_id] != 0:
+                # Match MuJoCo's runtime mesh collision surface, including CAD
+                # recesses that the convex collision hull fills in.
+                mesh = mesh.convex_hull
                 self.collision_meshes[geom_id] = mesh
                 geom_name = self.model.geom(geom_id).name or f"geom_{geom_id}"
                 self.collision_handles[geom_id] = server.scene.add_mesh_simple(
@@ -220,7 +223,7 @@ class TemplateEditor:
         self.template_by_name = {path.stem: path for path in template_paths}
 
         self.server.gui.add_markdown(
-            "## Sharpa template editor\n左侧参考，右侧编辑。启用标注后点击 Sharpa 指腹。"
+            f"## {self.args.hand} 标注编辑器\n左侧参考，右侧编辑。启用标注后点击右侧手部表面。"
         )
         self.template_dropdown = self.server.gui.add_dropdown(
             "Shadow template", list(self.template_by_name), initial_value="14_Tripod"
