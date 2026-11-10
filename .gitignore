@@ -12,5 +12,6 @@ output*
 assets/object
 dataset/
 third_party/sharpa-urdf-usd-xml/
+third_party/linkerhand-urdf/
 MUJOCO_LOG.TXT
 task/

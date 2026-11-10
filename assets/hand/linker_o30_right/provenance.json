@@ -1,0 +1,48 @@
+{
+  "repository": "https://github.com/linker-bot/linkerhand-urdf",
+  "revision": "49f26021b0a91ff5c33150df22970c07bb548672",
+  "source": "O30/urdf_0803-right/src/linkerhand_O30i_right.urdf/linkerhand_O30i_right-0803.urdf",
+  "hand": "right",
+  "moving_joints": 20,
+  "changes": [
+    "Preserve visual and collision meshes; assign unique geometry names",
+    "20 position actuators: kp=5, force limit +/-1 Nm",
+    "ring_mcp_roll: replace source zero effort with simulation assumption +/-1 Nm",
+    "joint damping=0.05, armature=0.0002, frictionloss=0.01"
+  ],
+  "hardware_calibrated": false,
+  "structural_collision_exclusions": [
+    [
+      "hand_base_link",
+      "thumb_metacarpals_base2"
+    ],
+    [
+      "hand_base_link",
+      "index_proximal"
+    ],
+    [
+      "hand_base_link",
+      "middle_proximal"
+    ],
+    [
+      "hand_base_link",
+      "ring_proximal"
+    ],
+    [
+      "hand_base_link",
+      "pinky_proximal"
+    ],
+    [
+      "index_metacarpals",
+      "middle_metacarpals"
+    ],
+    [
+      "middle_metacarpals",
+      "ring_metacarpals"
+    ],
+    [
+      "ring_metacarpals",
+      "pinky_metacarpals"
+    ]
+  ]
+}

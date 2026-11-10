@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""View successful Sharpa grasps exported by Dexonomy."""
+"""View successful hand grasps exported by Dexonomy."""
 
 from __future__ import annotations
 
@@ -17,12 +17,12 @@ DEFAULT_RESULTS = ROOT / "output/sharpa_tripod_demo_sharpa_left/succ_grasp"
 
 
 class GraspViewer:
-    def __init__(self, result_dir: Path, host: str, port: int) -> None:
+    def __init__(self, result_dir: Path, host: str, port: int, title: str = "Sharpa grasps") -> None:
         self.result_dir = result_dir
         self.paths = sorted(result_dir.rglob("*.npy"))
         if not self.paths:
             raise FileNotFoundError(f"No successful grasps in {result_dir}")
-        self.server = viser.ViserServer(host=host, port=port, label="Sharpa grasps")
+        self.server = viser.ViserServer(host=host, port=port, label=title)
         self.root = None
         self.center = np.zeros(3)
 
@@ -93,8 +93,9 @@ def main() -> None:
     parser.add_argument("--result-dir", type=Path, default=DEFAULT_RESULTS)
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8046)
+    parser.add_argument("--title", default="Sharpa grasps")
     args = parser.parse_args()
-    GraspViewer(args.result_dir, args.host, args.port)
+    GraspViewer(args.result_dir, args.host, args.port, args.title)
     print(f"Open http://{args.host}:{args.port}")
     try:
         threading.Event().wait()

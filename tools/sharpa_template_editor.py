@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Side-by-side Shadow reference and Sharpa template editor."""
+"""Side-by-side Shadow reference and configurable hand template editor."""
 
 from __future__ import annotations
 
@@ -198,16 +198,13 @@ class TemplateEditor:
             "sharpa",
             args.sharpa_xml,
             (args.spacing / 2.0, 0.0, 0.0),
-            display_rotation=SHARPA_DISPLAY_ROTATION,
+            display_rotation=(SHARPA_DISPLAY_ROTATION if args.hand == "sharpa_left" else np.eye(3)),
         )
-        if self.sharpa.model.nq != 22:
-            raise ValueError(f"Expected 22 Sharpa DoF, found {self.sharpa.model.nq}")
-
         self.server.scene.add_label(
             "/shadow/title", "Shadow reference", position=(0.0, 0.0, 0.23), anchor="center-center"
         )
         self.server.scene.add_label(
-            "/sharpa/title", "Sharpa left (editable)", position=(0.0, 0.0, 0.23), anchor="center-center"
+            "/sharpa/title", f"{args.hand} (editable)", position=(0.0, 0.0, 0.23), anchor="center-center"
         )
         self.contacts: list[Contact] = []
         self.contact_serial = 0
@@ -236,7 +233,7 @@ class TemplateEditor:
         sharpa_paths = sorted(self.args.output_dir.glob("*.yaml"))
         self.sharpa_template_by_name = {path.stem: path for path in sharpa_paths}
         self.sharpa_template_dropdown = self.server.gui.add_dropdown(
-            "Load Sharpa template", ["(new)", *self.sharpa_template_by_name]
+            f"Load {self.args.hand} template", ["(new)", *self.sharpa_template_by_name]
         )
         self.sharpa_template_dropdown.on_update(
             lambda _: self._load_sharpa_template(self.sharpa_template_dropdown.value)
@@ -244,8 +241,8 @@ class TemplateEditor:
             else None
         )
         self.annotate_checkbox = self.server.gui.add_checkbox("Contact annotation mode", False)
-        self.elastomer_checkbox = self.server.gui.add_checkbox("Elastomer only", True)
-        collision_checkbox = self.server.gui.add_checkbox("Show Sharpa collision meshes", False)
+        self.elastomer_checkbox = self.server.gui.add_checkbox("Elastomer only", self.args.hand == "sharpa_left")
+        collision_checkbox = self.server.gui.add_checkbox(f"Show {self.args.hand} collision meshes", False)
         collision_checkbox.on_update(
             lambda _: [
                 setattr(handle, "visible", collision_checkbox.value)
@@ -262,7 +259,7 @@ class TemplateEditor:
             with self.server.gui.add_folder(prefix.capitalize(), expand_by_default=prefix == "thumb"):
                 for joint_id in range(self.sharpa.model.njnt):
                     name = self.sharpa.model.joint(joint_id).name
-                    if f"_{prefix}_" not in name:
+                    if f"_{prefix}_" not in name and not name.startswith(prefix + "_"):
                         continue
                     qpos_id = int(self.sharpa.model.jnt_qposadr[joint_id])
                     low, high = self.sharpa.model.jnt_range[joint_id]
@@ -284,7 +281,7 @@ class TemplateEditor:
             rotate_minus.on_click(lambda _: self._rotate_last_normal(-90.0))
             rotate_plus = self.server.gui.add_button("Rotate last normal +90°")
             rotate_plus.on_click(lambda _: self._rotate_last_normal(90.0))
-            reset = self.server.gui.add_button("Reset Sharpa pose")
+            reset = self.server.gui.add_button(f"Reset {self.args.hand} pose")
             reset.on_click(lambda _: self._reset_pose())
             undo = self.server.gui.add_button("Undo last contact")
             undo.on_click(lambda _: self._undo_contact())
@@ -338,7 +335,7 @@ class TemplateEditor:
         annotation = load_yaml(str(self.sharpa_template_by_name[name]))
         qpos = np.asarray(annotation["qpos"], dtype=float)
         if qpos.shape != (self.sharpa.model.nq,):
-            self.status.content = f"`{name}` has {len(qpos)} qpos values, expected 22"
+            self.status.content = f"`{name}` has {len(qpos)} qpos values, expected {self.sharpa.model.nq}"
             return
         self._set_sharpa_qpos(qpos)
         self._clear_contacts()
@@ -354,7 +351,7 @@ class TemplateEditor:
                 geom_name = self._nearest_collision_geom(body_id, point)
                 self._add_contact(body_id, geom_name, point_body, normal_body)
         self.template_name.value = name
-        self.status.content = f"Loaded Sharpa template `{name}` ({len(self.contacts)} contacts)"
+        self.status.content = f"Loaded {self.args.hand} template `{name}` ({len(self.contacts)} contacts)"
 
     def _set_sharpa_qpos(self, qpos: np.ndarray) -> None:
         self._updating_sliders = True
@@ -391,7 +388,7 @@ class TemplateEditor:
 
     def _reset_pose(self) -> None:
         self._set_sharpa_qpos(self.sharpa.model.qpos0)
-        self.status.content = "Sharpa pose reset"
+        self.status.content = f"{self.args.hand} pose reset"
 
     def _update_contact_frames(self) -> None:
         for contact in self.contacts:
@@ -408,7 +405,7 @@ class TemplateEditor:
             self.elastomer_checkbox.value,
         )
         if hit is None:
-            self.status.content = "No Sharpa collision surface hit"
+            self.status.content = f"No {self.args.hand} collision surface hit"
             return
         geom_id, body_id, point, normal = hit
         body_position, body_rotation = self.sharpa.body_pose(body_id)
@@ -545,10 +542,21 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--shadow-xml", type=Path, default=DEFAULT_SHADOW_XML)
     parser.add_argument("--shadow-templates", type=Path, default=DEFAULT_SHADOW_TEMPLATES)
     parser.add_argument("--shadow-keypoints", type=Path, default=DEFAULT_SHADOW_KEYPOINTS)
-    parser.add_argument("--sharpa-xml", type=Path, default=DEFAULT_SHARPA_XML)
-    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT)
+    parser.add_argument("--sharpa-xml", "--target-xml", type=Path)
+    parser.add_argument("--output-dir", type=Path)
+    parser.add_argument("--hand", default="sharpa_left")
     parser.add_argument("--check", action="store_true", help="Load assets and exit")
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.sharpa_xml is None:
+        if args.hand == "sharpa_left":
+            args.sharpa_xml = DEFAULT_SHARPA_XML
+        else:
+            from dexonomy.util.file_util import load_yaml
+            cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{args.hand}.yaml"))
+            args.sharpa_xml = ROOT / cfg["xml_path"].replace("${asset_root}", "assets")
+    if args.output_dir is None:
+        args.output_dir = ROOT / "assets/hand" / args.hand / "raw_anno"
+    return args
 
 
 def main() -> None:
@@ -560,7 +568,7 @@ def main() -> None:
         shadow = mujoco.MjModel.from_xml_path(str(args.shadow_xml))
         sharpa = mujoco.MjModel.from_xml_path(str(args.sharpa_xml))
         templates = list(args.shadow_templates.glob("*.yaml"))
-        assert shadow.nq == sharpa.nq == 22 and templates
+        assert shadow.nq == 22 and sharpa.nq > 0 and templates
         keypoints = load_yaml(str(args.shadow_keypoints))
         for body_name, value in keypoints.items():
             if isinstance(value, str):
@@ -572,10 +580,10 @@ def main() -> None:
                 for value in _contact_entries(raw_contact):
                     if not isinstance(value, list):
                         assert len(keypoints[body_name][int(value)]) == 6
-        elastomer_id = next(
-            i for i in range(sharpa.ngeom) if "elastomer" in (sharpa.geom(i).name or "")
+        collision_id = next(
+            i for i in range(sharpa.ngeom) if sharpa.geom_contype[i] != 0
         )
-        mesh = _geom_mesh(sharpa, elastomer_id)
+        mesh = _geom_mesh(sharpa, collision_id)
         point, normal = mesh.triangles_center[0], mesh.face_normals[0]
         hits, _, _ = mesh.ray.intersects_location(
             [point + 0.02 * normal], [-normal], multiple_hits=False
@@ -593,8 +601,8 @@ def main() -> None:
                 values = contacts if contacts and isinstance(contacts[0], list) else [contacts]
                 assert all(len(value) == 6 for value in values)
         print(
-            f"OK: Shadow nq={shadow.nq}, Sharpa nq={sharpa.nq}, "
-            f"references={len(templates)}, Sharpa templates={len(sharpa_templates)}"
+            f"OK: Shadow nq={shadow.nq}, {args.hand} nq={sharpa.nq}, "
+            f"references={len(templates)}, {args.hand} templates={len(sharpa_templates)}"
         )
         return
     TemplateEditor(args)

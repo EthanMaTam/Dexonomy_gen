@@ -175,7 +175,35 @@ pixi run sharpa-grasp-viewer \
 Open `http://127.0.0.1:8046`. The viewer needs both the `.npy` results and their
 corresponding meshes under the shard's `vis_3d/succ_grasp/` directory.
 
-### 3. Upstream grasp synthesis
+### 3. Linker Hand O30 右手
+
+O30 右手适配复用现有模板编辑器、数据集生成器和抓取查看器。
+官方模型文件名为 `O30i right / 0803`，具有 20 个关节。
+下载完整 URDF 和网格，并固定到以下版本：
+
+```bash
+git clone https://github.com/linker-bot/linkerhand-urdf.git third_party/linkerhand-urdf
+git -C third_party/linkerhand-urdf checkout 49f26021b0a91ff5c33150df22970c07bb548672
+pixi run python -m tools.prepare_linker_o30
+pixi run python -m tools.check_hand_assets --hand linker_o30_right
+pixi run python -m tools.sharpa_template_editor --hand linker_o30_right --port 8048
+```
+
+3 份基于几何生成的初始标注位于 `assets/hand/linker_o30_right/raw_anno/`。
+执行抓取生成和仿真评估：
+
+```bash
+pixi run python -m tools.run_sharpa_dataset --hand linker_o30_right \
+  --output output/o30_run --hours 1 --object-limit 6 \
+  --points 1024 --workers 2 --gpu 0
+```
+
+本地集成验证覆盖 6 个物体、3 个尺度，从 432 个初始候选中得到 97 个仿真成功抓取。
+当前使用假设的执行器参数，尚未实物标定。
+模型转换、装配碰撞排除、标注格式与编辑逻辑、复现和查看方法详见
+[O30 右手适配说明](assets/hand/linker_o30_right/README.md)。
+
+### 4. Upstream grasp synthesis
 Run the following commands to synthesize grasps for a specific grasp type:
 ```bash
 dexrun op=tmpl  # Convert human annotations to valid templates

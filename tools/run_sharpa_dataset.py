@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Time-bounded, resumable Sharpa dataset generation using the existing operations."""
+"""Time-bounded, resumable hand dataset generation using the existing operations."""
 
 from __future__ import annotations
 
@@ -19,6 +19,7 @@ import sys
 import time
 
 import numpy as np
+import mujoco
 
 from dexonomy.util.file_util import load_scene_cfg, load_yaml
 
@@ -91,6 +92,7 @@ def summarize(output, templates):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--hand", default="sharpa_left", help="Hand configuration name")
     parser.add_argument("--hours", type=float, default=36)
     parser.add_argument("--objects-per-shard", type=int, default=12)
     parser.add_argument("--scales", nargs="+", default=["005", "008", "011"])
@@ -120,14 +122,17 @@ def main():
     else:
         raw = output / "raw_anno_snapshot"
         raw.mkdir()
-        paths = sorted((ROOT / "assets/hand/sharpa_left/raw_anno").glob("*.yaml"))
+        hand_cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{args.hand}.yaml"))
+        xml_path = hand_cfg["xml_path"].replace("${asset_root}", str(ROOT / "assets"))
+        model = mujoco.MjModel.from_xml_path(str(ROOT / xml_path))
+        paths = sorted((ROOT / "assets/hand" / args.hand / "raw_anno").glob("*.yaml"))
         if args.templates:
             paths = [p for p in paths if p.stem in args.templates]
             assert {p.stem for p in paths} == set(args.templates)
         assert paths
         for path in paths:
             data = load_yaml(str(path))
-            assert len(data["qpos"]) == 22 and data.get("contact"), path
+            assert len(data["qpos"]) == model.nq and data.get("contact"), path
             shutil.copy2(path, raw / path.name)
         objects = sorted(p for p in (ROOT / "assets/object/DGN_5k/scene_cfg").iterdir()
                          if p.is_dir() and all((p / "floating" / f"scale{s}.npy").is_file()
@@ -144,7 +149,7 @@ def main():
     templates = job["templates"]
     environment = {**os.environ, "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2",
                    "MPLCONFIGDIR": "/tmp/dexonomy-matplotlib", "PYTHONUNBUFFERED": "1"}
-    common = ["hand=sharpa_left", f"raw_anno_dir={output}/raw_anno_snapshot",
+    common = [f"hand={settings.get('hand', 'sharpa_left')}", f"raw_anno_dir={output}/raw_anno_snapshot",
               f"init_tmpl_dir={output}/init_tmpl", "tmpl_upd_mode=disabled", "skip_traj=True"]
     progress = summarize(output, templates)
 
