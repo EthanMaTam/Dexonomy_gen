@@ -4,3 +4,6 @@
 [submodule "third_party/BODex"]
 	path = third_party/BODex
 	url = git@github.com:JYChen18/BODex.git
+[submodule "third_party/linkerhand-urdf"]
+	path = third_party/linkerhand-urdf
+	url = https://github.com/linker-bot/linkerhand-urdf.git

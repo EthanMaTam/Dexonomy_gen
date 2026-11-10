@@ -1,0 +1,76 @@
+{
+  "candidates_evaluated": 17,
+  "tuning_objects": 6,
+  "heldout_objects": 6,
+  "object_sets_disjoint": true,
+  "selection_frozen_before_validation": true,
+  "model_sha256": "222ee0f09f7ea802a3ece973b47bd82db47fe50e347132cfa03283867b25e79f",
+  "thresholds_changed": false,
+  "heldout_baseline_success": 51,
+  "heldout_optimized_success": 183,
+  "heldout_initializations": 576,
+  "accepted_templates": [
+    "14_Tripod",
+    "24_Tip_Pinch",
+    "27_Quadpod",
+    "30_Palmar"
+  ],
+  "selection": [
+    {
+      "template": "14_Tripod",
+      "candidate": "14_Tripod__wide_seed",
+      "train_initializations": 144,
+      "train_baseline_success": 3,
+      "train_selected_success": 70,
+      "selected_sha256": "7503b9550566d16fd045cf981c273706909f9457093aa66e15b235dacd176816",
+      "heldout_initializations": 144,
+      "heldout_baseline_success": 9,
+      "heldout_optimized_success": 52,
+      "heldout_baseline_percent": 6.25,
+      "heldout_optimized_percent": 36.111111111111114,
+      "accepted": true
+    },
+    {
+      "template": "24_Tip_Pinch",
+      "candidate": "24_Tip_Pinch__sphere_055",
+      "train_initializations": 144,
+      "train_baseline_success": 11,
+      "train_selected_success": 104,
+      "selected_sha256": "9e28ff38088f5c9c4334f021a3d94fdba2c263f9931d2f38c24c48ce0095dfc5",
+      "heldout_initializations": 144,
+      "heldout_baseline_success": 18,
+      "heldout_optimized_success": 76,
+      "heldout_baseline_percent": 12.5,
+      "heldout_optimized_percent": 52.77777777777778,
+      "accepted": true
+    },
+    {
+      "template": "27_Quadpod",
+      "candidate": "27_Quadpod__pad_center",
+      "train_initializations": 144,
+      "train_baseline_success": 6,
+      "train_selected_success": 33,
+      "selected_sha256": "e0cef76494cdb53df0771a38b3069528b44fbce11cb651d72ba875f58858c3d2",
+      "heldout_initializations": 144,
+      "heldout_baseline_success": 5,
+      "heldout_optimized_success": 33,
+      "heldout_baseline_percent": 3.4722222222222223,
+      "heldout_optimized_percent": 22.916666666666668,
+      "accepted": true
+    },
+    {
+      "template": "30_Palmar",
+      "candidate": "30_Palmar__sphere_055",
+      "train_initializations": 144,
+      "train_baseline_success": 10,
+      "train_selected_success": 32,
+      "selected_sha256": "d1cbbd1d690c2fe9f192223a4fe37e6060aceb5b24a0ffa2082580c483487488",
+      "heldout_initializations": 144,
+      "heldout_baseline_success": 19,
+      "heldout_optimized_success": 22,
+      "heldout_baseline_percent": 13.194444444444445,
+      "heldout_optimized_percent": 15.277777777777779,
+      "accepted": true
+    }
+  ]
+}

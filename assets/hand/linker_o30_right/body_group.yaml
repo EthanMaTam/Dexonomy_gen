@@ -1,0 +1,7 @@
+body_group:
+- [thumb_metacarpals_base1, thumb_metacarpals_base2, thumb_proximal, thumb_distal]
+- [index_metacarpals, index_proximal, index_middle, index_distal]
+- [middle_metacarpals, middle_proximal, middle_middle, middle_distal]
+- [ring_metacarpals, ring_proximal, ring_middle, ring_distal]
+- [pinky_metacarpals, pinky_proximal, pinky_middle, pinky_distal]
+- [hand_base_link]

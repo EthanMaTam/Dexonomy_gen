@@ -28,7 +28,7 @@ Our algorithm synthesizes **contact-rich, penetration-free, and physically plaus
 All starting from just **one** human-annotated template *per hand and grasp type*.
 
 ## Supported Features
-- Hands: Shadow, Allegro, Leap, MANO, Unitree_G1
+- Hands: Shadow, Allegro, Leap, MANO, Unitree_G1, Sharpa (left), Linker Hand O30 (right)
 - Object Scenes: Single (floating & tabletop), Clustered (light clutter)
 - Object Assets: Rigid objects (ShapeNet & Objaverse), Articulated objects (PartNet)
 - Physics Simulator: MuJoCo
@@ -100,7 +100,17 @@ cd ../..
 ## Quick Start
 ### 1. Prepare Object Assets 
 
-Download our pre-processed object assets `DGN_5k_processed.zip` from [Hugging Face](https://huggingface.co/datasets/JiayiChenPKU/Dexonomy), and organize the unzipped folders as below. 
+Download the pre-processed object assets `DGN_5k_processed.tar.gz` from [Hugging Face](https://huggingface.co/datasets/JiayiChenPKU/Dexonomy). From the repository root:
+
+```bash
+mkdir -p dataset/DGN_5k_processed
+curl -L --fail --retry 5 -C - \
+  -o dataset/DGN_5k_processed.tar.gz \
+  'https://huggingface.co/datasets/JiayiChenPKU/Dexonomy/resolve/main/DGN_5k_processed.tar.gz?download=true'
+tar -xzf dataset/DGN_5k_processed.tar.gz -C dataset/DGN_5k_processed
+```
+
+The expected object layout is:
 ```
 assets/object/DGN_5k
 |- processed_data
@@ -115,13 +125,17 @@ assets/object/DGN_5k
 ```
 Alternatively, you can pre-process your own object assets using [MeshProcess](https://github.com/JYChen18/MeshProcess).
 
-If the extracted dataset is stored at `dataset/DGN_5k_processed/DGN_5k`, link it
-into the expected location instead of copying it:
+Link the extracted `dataset/DGN_5k_processed/DGN_5k` directory into the expected
+location instead of copying it:
 
 ```bash
 mkdir -p assets/object
 ln -s ../../dataset/DGN_5k_processed/DGN_5k assets/object/DGN_5k
+test -d assets/object/DGN_5k/scene_cfg
 ```
+
+If that symlink already exists, keep it and run the directory check after
+extraction; it remains broken until its target has been downloaded and extracted.
 
 Both `dataset/` and `assets/object/` are ignored by Git.
 
@@ -175,7 +189,44 @@ pixi run sharpa-grasp-viewer \
 Open `http://127.0.0.1:8046`. The viewer needs both the `.npy` results and their
 corresponding meshes under the shard's `vis_3d/succ_grasp/` directory.
 
-### 3. Upstream grasp synthesis
+### 3. Linker Hand O30 右手
+
+O30 右手适配复用现有模板编辑器、数据集生成器和抓取查看器。
+官方模型文件名为 `O30i right / 0803`，具有 20 个关节。
+官方 URDF 和网格通过 Git 子模块管理，主仓库锁定厂商提交
+`49f26021b0a91ff5c33150df22970c07bb548672`。首次安装已初始化子模块时无需重复下载；已有工作区运行：
+
+```bash
+git submodule update --init third_party/linkerhand-urdf
+pixi run python -m tools.prepare_linker_o30
+pixi run python -m tools.check_hand_assets --hand linker_o30_right
+pixi run python -m tools.sharpa_template_editor --hand linker_o30_right --port 8048
+```
+
+当前已覆盖 33 类编号抓取，另保留较大三指模板，共 34 份初始标注，位于
+`assets/hand/linker_o30_right/raw_anno/`。初次补齐分类时保留原有 3 份，随后优化了
+14、24、27、30 类；优化前标注已备份。
+逐类几何及仿真结果见 [全分类验证表](assets/hand/linker_o30_right/taxonomy_validation.md)。
+执行抓取生成和仿真评估：
+
+```bash
+pixi run python -m tools.run_sharpa_dataset --hand linker_o30_right \
+  --output output/o30_run --hours 1 --object-limit 6 \
+  --points 1024 --workers 2 --gpu 0
+```
+
+最初三份模板的集成验证得到 97 个仿真成功抓取。全分类验证覆盖 6 个物体、
+3 个尺度，从 4,896 个候选中得到 509 个仿真成功抓取，33 类编号模板均有成功样本。
+当前使用假设的执行器参数，尚未实物标定。
+模型转换、装配碰撞排除、标注格式与编辑逻辑、复现和查看方法详见
+[O30 右手适配说明](assets/hand/linker_o30_right/README.md)。
+
+已增加 Shadow 同条件对照，并对 O30 的 Tripod、Tip Pinch、Quadpod、Palmar
+完成小范围优化及独立物体验证。模型与全局验收阈值不变，原标注已备份。
+四类在另外六个物体上的成功率从 8.85% 提升到 31.77%；此分数不是全分类成功率。
+详见 [O30 优化报告](assets/hand/linker_o30_right/optimization_report.md)。
+
+### 4. Upstream grasp synthesis
 Run the following commands to synthesize grasps for a specific grasp type:
 ```bash
 dexrun op=tmpl  # Convert human annotations to valid templates
