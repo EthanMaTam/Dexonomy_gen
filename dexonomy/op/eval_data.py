@@ -2,6 +2,7 @@ import os
 import multiprocessing
 import logging
 import glob
+import json
 import numpy as np
 from hydra.utils import to_absolute_path
 
@@ -80,7 +81,8 @@ def _single_eval(param):
             else HandCfg(hand_cfg.xml_path, freejoint=True)
         ),
         scene_cfg=scene_cfg,
-        sim_cfg=MuJoCo_EvalCfg(miu_coef=op_cfg.miu_coef),
+        sim_cfg=MuJoCo_EvalCfg(miu_coef=op_cfg.miu_coef,
+                              connect_error_limit=getattr(hand_cfg, "connect_eval_limit", None)),
         debug_render=cfg.debug_render,
         debug_view=cfg.debug_view,
         hard=op_cfg.hard,
@@ -109,6 +111,18 @@ def _single_eval(param):
         op_cfg.trans_thre,
         op_cfg.rot_thre,
     )
+
+    connect_limit = getattr(hand_cfg, "connect_eval_limit", None)
+    if connect_limit is not None:
+        physics_success = bool(succ_flag)
+        connect_success = sim_env.max_connect_error <= connect_limit
+        succ_flag = physics_success and connect_success
+        check_path = os.path.join(cfg.log_dir, "connect_checks", os.path.relpath(input_path, data_dir)+".json")
+        os.makedirs(os.path.dirname(check_path), exist_ok=True)
+        with open(check_path, "w") as stream:
+            json.dump({"physics_success": physics_success, "connect_success": bool(connect_success),
+                       "max_connect_error_m": sim_env.max_connect_error, "limit_m": float(connect_limit),
+                       "accepted": bool(succ_flag)}, stream, indent=2)
 
     sim_env.save_debug(input_path.replace(data_dir, cfg.debug_dir))
 
@@ -176,7 +190,7 @@ def operate_eval(cfg):
         for ip in param_lst:
             _single_eval(ip)
     else:
-        with multiprocessing.Pool(processes=3 * cfg.n_worker) as pool:
+        with multiprocessing.Pool(processes=cfg.n_worker) as pool:
             jobs = pool.imap_unordered(_single_eval, param_lst)
             results = list(jobs)
             write_mode = "a" if cfg.skip_done else "w"

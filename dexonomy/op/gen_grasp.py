@@ -163,6 +163,19 @@ def _single_grasp(param):
         if grasp_filter.early_stop():
             break
 
+    connect_limit = cfg.hand.get("connect_grasp_limit", None)
+    if connect_limit is not None:
+        from dexonomy.util.closed_loop_util import project_free_hand_grasp
+        try:
+            projected, changed = project_free_hand_grasp(
+                cfg.hand.xml_path, sim_env.get_hand_qpos(), float(connect_limit)
+            )
+        except ValueError as error:
+            logging.debug("%s infeasible linkage: %s", input_path, error)
+            return input_path
+        if changed:
+            sim_env.reset_qpos(projected)
+        grasp_data["connect_projected"] = changed
     grasp_data["grasp_qpos"] = np_array32(sim_env.get_hand_qpos())[None]
 
     succ_flag, ho_c = grasp_filter.forward(grasp_data)

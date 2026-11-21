@@ -33,9 +33,21 @@ def main():
     # Current supported templates describe scalar hinge/slide joints.
     assert all(t in (mujoco.mjtJoint.mjJNT_HINGE, mujoco.mjtJoint.mjJNT_SLIDE)
                for t in model.jnt_type)
-    assert set(model.actuator_trnid[:, 0]) == set(range(model.njnt)), "Unactuated joints"
+    passive = set(range(model.njnt)) - set(model.actuator_trnid[:, 0])
+    if passive:
+        assert model.neq and all(t == mujoco.mjtEq.mjEQ_CONNECT for t in model.eq_type), "Unactuated joints without supported closed-loop transmission"
+        # Every passive coordinate must lie on a chain participating in a loop.
+        covered = set()
+        for bid in np.r_[model.eq_obj1id, model.eq_obj2id]:
+            while bid > 0:
+                covered.update(range(model.body_jntadr[bid], model.body_jntadr[bid]+model.body_jntnum[bid]))
+                bid = model.body_parentid[bid]
+        assert passive <= covered, "Passive joint outside the closed-loop transmission"
     env = MuJoCo_VisEnv(hand_cfg=HandCfg(str(xml)), vis_mode="collision")
     report = {"hand": args.hand, "nq": model.nq, "actuators": model.nu, "templates": []}
+    if passive:
+        report["passive_joints"] = [model.joint(i).name for i in sorted(passive)]
+        report["connect_equalities"] = model.neq
     for path in paths:
         annotation = load_yaml(str(path))
         qpos = np.asarray(annotation["qpos"])
@@ -43,6 +55,14 @@ def main():
         assert (qpos >= model.jnt_range[:, 0]-1e-7).all(), path
         assert (qpos <= model.jnt_range[:, 1]+1e-7).all(), path
         rotations, positions = env.forward_kinematics(qpos)
+        loop_error = 0.
+        if passive:
+            from tools.closed_loop_hand import connect_errors
+            state = mujoco.MjData(model)
+            state.qpos[:] = qpos
+            mujoco.mj_forward(model, state)
+            loop_error = float(np.linalg.norm(connect_errors(model, state), axis=1).max())
+            assert loop_error < 2e-5, (path, "Linkage not closed", loop_error)
         maximum_distance = 0.
         contacts = 0
         for body, values in annotation["contact"].items():
@@ -62,7 +82,8 @@ def main():
                 contacts += 1
         assert contacts >= 2, path
         report["templates"].append({"name": path.stem, "contacts": contacts,
-                                    "max_surface_distance_m": maximum_distance})
+                                    "max_surface_distance_m": maximum_distance,
+                                    **({"max_connect_error_m": loop_error} if passive else {})})
     assert report["templates"], "No annotations"
     # Compare source and converted kinematics at nonzero poses, not just the rest pose.
     if args.source_xml:

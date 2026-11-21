@@ -1,0 +1,37 @@
+{
+  "model_sha256": "69f26f9206d57dda14720e2fd5bd1c3a75ad2f566389b767f2a18ef113ce8c8a",
+  "templates": 34,
+  "numbered_categories": 33,
+  "numbered_categories_with_accepted_samples": 26,
+  "needs_improvement": [
+    "16_Lateral",
+    "19_Distal",
+    "20_Writing_Tripod",
+    "21_Tripod_Variation",
+    "29_Stick",
+    "32_Ventral",
+    "33_Inferior_Pincer"
+  ],
+  "objects": 6,
+  "scales": [
+    "005",
+    "008",
+    "011"
+  ],
+  "points": 512,
+  "totals": {
+    "initializations": 4896,
+    "refined": 458,
+    "simulation_successful": 344,
+    "closed_loop_accepted": 342
+  },
+  "final_grasp_connect_limit_m": 0.0002,
+  "max_successful_grasp_connect_error_m": 0.00023637425957921579,
+  "replayed_classes": 8,
+  "replay_max_connect_error_m": 0.00018294780966312215,
+  "all_replayed_physics_successful": true,
+  "replay_sampled_states_within_final_grasp_limit": true,
+  "annotations_match_snapshot": true,
+  "geometry_check_max_connect_error_m": 4.375846954957254e-08,
+  "source_kinematics_verified_poses": 8
+}

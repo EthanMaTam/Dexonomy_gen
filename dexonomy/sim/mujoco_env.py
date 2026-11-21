@@ -724,6 +724,7 @@ class MuJoCo_OptEnv(MuJoCo_BaseEnv):
 @dataclass
 class MuJoCo_EvalCfg(SimCfg):
     timestep: float = 0.004
+    connect_error_limit: float | None = None
     hand_mocap_solimp: list[float] = field(
         default_factory=lambda: [0.9, 0.95, 0.001, 0.5, 2]
     )
@@ -743,8 +744,19 @@ class MuJoCo_EvalEnv(MuJoCo_BaseEnv):
         hard: bool = False,
     ):
         self.hard = hard
+        self.max_connect_error = 0.0
         super().__init__(hand_cfg, scene_cfg, sim_cfg, debug_render, debug_view)
         return
+
+    def step_sim(self, substep) -> None:
+        super().step_sim(substep)
+        if getattr(self._cfg, "connect_error_limit", None) is not None:
+            from dexonomy.util.closed_loop_util import connect_errors
+            mujoco.mj_kinematics(self._model, self._data)
+            errors = connect_errors(self._model, self._data)
+            if len(errors):
+                maximum = float(np.linalg.norm(errors, axis=1).max())
+                self.max_connect_error = max(self.max_connect_error, maximum) if np.isfinite(maximum) else float("inf")
 
     def _set_friction(self, miu_coef):
         self._spec.option.cone = mujoco.mjtCone.mjCONE_ELLIPTIC

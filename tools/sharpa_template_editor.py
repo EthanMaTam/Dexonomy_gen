@@ -210,6 +210,7 @@ class TemplateEditor:
             "/sharpa/title", f"{args.hand} (editable)", position=(0.0, 0.0, 0.23), anchor="center-center"
         )
         self.contacts: list[Contact] = []
+        self.required_cbody = None
         self.contact_serial = 0
         self.shadow_contact_root = None
         self._updating_sliders = False
@@ -261,6 +262,8 @@ class TemplateEditor:
         for prefix in prefixes:
             with self.server.gui.add_folder(prefix.capitalize(), expand_by_default=prefix == "thumb"):
                 for joint_id in range(self.sharpa.model.njnt):
+                    if self.args.hand == "zte_hand" and joint_id not in self.sharpa.model.actuator_trnid[:, 0]:
+                        continue
                     name = self.sharpa.model.joint(joint_id).name
                     if f"_{prefix}_" not in name and not name.startswith(prefix + "_"):
                         continue
@@ -340,8 +343,17 @@ class TemplateEditor:
         if qpos.shape != (self.sharpa.model.nq,):
             self.status.content = f"`{name}` has {len(qpos)} qpos values, expected {self.sharpa.model.nq}"
             return
+        if self.args.hand == "zte_hand":
+            from tools.closed_loop_hand import connect_errors
+            state = mujoco.MjData(self.sharpa.model)
+            state.qpos[:] = qpos
+            mujoco.mj_kinematics(self.sharpa.model, state)
+            if np.linalg.norm(connect_errors(self.sharpa.model, state), axis=1).max() >= 2e-5:
+                self.status.content = "加载失败：标注姿态不满足闭环连接约束，请先运行资产检查。"
+                return
         self._set_sharpa_qpos(qpos)
         self._clear_contacts()
+        self.required_cbody = annotation.get("required_cbody")
         for body_name, raw_contact in (annotation.get("contact") or {}).items():
             values = raw_contact if raw_contact and isinstance(raw_contact[0], list) else [raw_contact]
             body_id = self.sharpa.model.body(body_name).id
@@ -383,6 +395,18 @@ class TemplateEditor:
 
     def _set_joint(self, qpos_id: int, value: float) -> None:
         if self._updating_sliders:
+            return
+        if self.args.hand == "zte_hand":
+            from tools.closed_loop_hand import project_passive
+            qpos = self.sharpa.data.qpos.copy()
+            qpos[qpos_id] = value
+            try:
+                qpos = project_passive(self.sharpa.model, qpos)
+            except ValueError as error:
+                self._set_sharpa_qpos(self.sharpa.data.qpos.copy())
+                self.status.content = str(error)
+                return
+            self._set_sharpa_qpos(qpos)
             return
         self.sharpa.data.qpos[qpos_id] = value
         mujoco.mj_forward(self.sharpa.model, self.sharpa.data)
@@ -497,11 +521,18 @@ class TemplateEditor:
         self.status.content = f"Removed last contact ({len(self.contacts)} remaining)"
 
     def _clear_contacts(self) -> None:
+        self.required_cbody = None
         while self.contacts:
             self.contacts.pop().frame.remove()
         self.status.content = "Contacts cleared"
 
     def _save(self) -> None:
+        if self.args.hand == "zte_hand":
+            from tools.closed_loop_hand import connect_errors
+            mujoco.mj_kinematics(self.sharpa.model, self.sharpa.data)
+            if np.linalg.norm(connect_errors(self.sharpa.model, self.sharpa.data), axis=1).max() >= 2e-5:
+                self.status.content = "保存失败：当前姿态不满足闭环连接约束。"
+                return
         name = self.template_name.value.strip()
         if not re.fullmatch(r"[A-Za-z0-9_-]+", name):
             self.status.content = "Template name may contain only letters, digits, `_`, and `-`"
@@ -527,6 +558,11 @@ class TemplateEditor:
             "qpos": np.round(self.sharpa.data.qpos, 6).tolist(),
             "contact": contact_yaml,
         }
+        if self.required_cbody is not None:
+            if any(body not in contact_yaml for group in self.required_cbody for body in group):
+                self.status.content = "保存失败：已删除必要接触指节。请保留该接触，或清空接触后重新标注。"
+                return
+            payload["required_cbody"] = self.required_cbody
         output_path.parent.mkdir(parents=True, exist_ok=True)
         yaml = YAML()
         yaml.default_flow_style = None

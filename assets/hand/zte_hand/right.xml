@@ -1,0 +1,330 @@
+<mujoco model="zte-hand_right">
+  <compiler angle="radian" meshdir="../../../third_party/zte_hand/right_hand_V1.0/meshes" />
+  <visual>
+    <global offwidth="1920" offheight="1080" />
+  </visual>
+  <option gravity="0 0 -9.81" iterations="100" solver="Newton" integrator="implicit" timestep="0.001" cone="elliptic" impratio="100" />
+  <default>
+    <geom condim="3" contype="1" conaffinity="1" solref="0.02 4" solimp="0.99 0.99 0.001" friction="3. 2. 2." />
+    <joint type="hinge" damping="0.1" armature="0.01" limited="true" solimplimit="0.95 0.95 0.1" />
+  </default>
+  <size njmax="1000" nconmax="1000" />
+  <asset>
+    <mesh name="base_link" file="base_link.STL" />
+    <mesh name="arm_X_Link" file="arm_X_Link.STL" />
+    <mesh name="arm_Y_Link" file="arm_Y_Link.STL" />
+    <mesh name="hand_base_Link" file="hand_base_Link.STL" />
+    <mesh name="PCB_Link" file="PCB_Link.STL" />
+    <mesh name="thumb_Link" file="thumb_Link.STL" />
+    <mesh name="thumb_Link4" file="thumb_Link4.STL" />
+    <mesh name="thumb_Link3" file="thumb_Link3.STL" />
+    <mesh name="thumb_Link2" file="thumb_Link2.STL" />
+    <mesh name="thumb_Link1" file="thumb_Link1.STL" />
+    <mesh name="IF_Link" content_type="model/stl" file="IF_Link.STL" />
+    <mesh name="IF_Link4" content_type="model/stl" file="IF_Link4.STL" />
+    <mesh name="IF_Link3" content_type="model/stl" file="IF_Link3.STL" />
+    <mesh name="IF_Link2" content_type="model/stl" file="IF_Link2.STL" />
+    <mesh name="IF_Link1" content_type="model/stl" file="IF_Link1.STL" />
+    <mesh name="MF_Link" content_type="model/stl" file="MF_Link.STL" />
+    <mesh name="MF_Link4" content_type="model/stl" file="MF_Link4.STL" />
+    <mesh name="MF_Link3" content_type="model/stl" file="MF_Link3.STL" />
+    <mesh name="MF_Link2" content_type="model/stl" file="MF_Link2.STL" />
+    <mesh name="MF_Link1" content_type="model/stl" file="MF_Link1.STL" />
+    <mesh name="RF_Link" content_type="model/stl" file="RF_Link.STL" />
+    <mesh name="RF_Link4" content_type="model/stl" file="RF_Link4.STL" />
+    <mesh name="RF_Link3" content_type="model/stl" file="RF_Link3.STL" />
+    <mesh name="RF_Link2" content_type="model/stl" file="RF_Link2.STL" />
+    <mesh name="RF_Link1" content_type="model/stl" file="RF_Link1.STL" />
+    <mesh name="LF_Link" content_type="model/stl" file="LF_Link.STL" />
+    <mesh name="LF_Link4" content_type="model/stl" file="LF_Link4.STL" />
+    <mesh name="LF_Link3" content_type="model/stl" file="LF_Link3.STL" />
+    <mesh name="LF_Link2" content_type="model/stl" file="LF_Link2.STL" />
+    <mesh name="LF_Link1" content_type="model/stl" file="LF_Link1.STL" />
+    <mesh name="thumb_Link3_1" content_type="model/stl" file="thumb_Link3_1.STL" />
+    <mesh name="thumb_Link3_2" content_type="model/stl" file="thumb_Link3_2.STL" />
+    <mesh name="IF_Link3_1" content_type="model/stl" file="IF_Link3_1.STL" />
+    <mesh name="IF_Link3_2" content_type="model/stl" file="IF_Link3_2.STL" />
+    <texture type="skybox" builtin="gradient" rgb1="0.3 0.5 0.7" rgb2="0 0 0" width="512" height="3072" />
+    <texture type="2d" name="groundplane" builtin="checker" mark="edge" rgb1="0.2 0.3 0.4" rgb2="0.1 0.2 0.3" markrgb="0.8 0.8 0.8" width="300" height="300" />
+    <material name="groundplane" texture="groundplane" texuniform="true" texrepeat="5 5" reflectance="0.2" />
+  </asset>
+  <worldbody>
+    <body name="hand_base_link" pos="0 0 0" quat="1 0 0 0">
+      <geom pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.3 0.3 0.3 1" mesh="hand_base_Link" name="hand_base_link_geom_0" />
+      <geom pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="0.3 0.3 0.3 1" mesh="hand_base_Link" name="hand_base_link_geom_1" />
+      <geom pos="0 0 0" quat="1 0 0 0" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="1 1 1 1" mesh="PCB_Link" name="hand_base_link_geom_2" />
+      <geom pos="0 0 0" quat="1 0 0 0" type="mesh" rgba="1 1 1 1" mesh="PCB_Link" name="hand_base_link_geom_3" />
+      <geom pos="0.017209 0.036904 0.02401" quat="0.892655 -0.369748 0.238165 -0.0986503" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="thumb_Link" name="hand_base_link_geom_4" />
+      <geom pos="0.017209 0.036904 0.02401" quat="0.892655 -0.369748 0.238165 -0.0986503" type="mesh" rgba="0.4 0.4 0.4 1" mesh="thumb_Link" name="hand_base_link_geom_5" />
+      <geom pos="0.0055 0.0365 0.0728" quat="0.707105 0 0 -0.707108" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="IF_Link" name="hand_base_link_geom_6" />
+      <geom pos="0.0055 0.0365 0.0728" quat="0.707105 0 0 -0.707108" type="mesh" rgba="0.4 0.4 0.4 1" mesh="IF_Link" name="hand_base_link_geom_7" />
+      <geom pos="0.0055 0.011 0.0818" quat="0.707105 0 0 -0.707108" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="MF_Link" name="hand_base_link_geom_8" />
+      <geom pos="0.0055 0.011 0.0818" quat="0.707105 0 0 -0.707108" type="mesh" rgba="0.4 0.4 0.4 1" mesh="MF_Link" name="hand_base_link_geom_9" />
+      <geom pos="0.0055 -0.0145 0.0728" quat="0.707105 0 0 -0.707108" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="RF_Link" name="hand_base_link_geom_10" />
+      <geom pos="0.0055 -0.0145 0.0728" quat="0.707105 0 0 -0.707108" type="mesh" rgba="0.4 0.4 0.4 1" mesh="RF_Link" name="hand_base_link_geom_11" />
+      <geom pos="0.0055 -0.04 0.0638" quat="0.707105 0 0 -0.707108" type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0.4 0.4 0.4 1" mesh="LF_Link" name="hand_base_link_geom_12" />
+      <geom pos="0.0055 -0.04 0.0638" quat="0.707105 0 0 -0.707108" type="mesh" rgba="0.4 0.4 0.4 1" mesh="LF_Link" name="hand_base_link_geom_13" />
+      <body name="thumb_metacarpal" pos="0.017209 0.036904 0.02401" quat="0.892655 -0.369748 0.238165 -0.0986503">
+        <inertial pos="0.0019526 -0.0012368 0.0045007" quat="0.972408 -0.233053 0.0073744 0.00739944" mass="0.0025852" diaginertia="1.79269e-07 1.52873e-07 9.40182e-08" />
+        <joint name="thumb_metacarpal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="thumb_Link4" name="thumb_metacarpal_geom_0" />
+        <geom type="mesh" mesh="thumb_Link4" name="thumb_metacarpal_geom_1" />
+        <body name="thumb_proximal" pos="0 0 0.012" quat="0.707105 0 0 -0.707108">
+          <inertial pos="-0.0003732 -0.00081685 0.020703" quat="0.997603 -0.00216874 -0.00945916 -0.0685101" mass="0.0038321" diaginertia="6.85096e-07 6.50816e-07 1.49369e-07" />
+          <joint name="thumb_proximal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="thumb_Link3" name="thumb_proximal_geom_0" />
+          <geom type="mesh" mesh="thumb_Link3" name="thumb_proximal_geom_1" />
+          <body name="thumb_middle" pos="0 0 0.04" quat="0.984789 0.00106551 0.00604274 -0.173647">
+            <inertial pos="0.00023516 -3.2112e-09 0.012478" quat="0.707107 -1.15512e-05 -1.15512e-05 0.707107" mass="0.0012862" diaginertia="1.443e-07 1.4009e-07 2.0757e-08" />
+            <joint name="thumb_middle_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="thumb_Link2" name="thumb_middle_geom_0" />
+            <geom type="mesh" mesh="thumb_Link2" name="thumb_middle_geom_1" />
+            <body name="thumb_distal" pos="0 0 0.027">
+              <inertial pos="0.00011656 -3.7484e-08 0.012442" quat="0.999984 0 0.0057193 0" mass="0.0011533" diaginertia="2.10792e-07 1.7946e-07 3.95076e-08" />
+              <joint name="thumb_distal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="thumb_Link1" name="thumb_distal_geom_0" />
+              <geom type="mesh" mesh="thumb_Link1" name="thumb_distal_geom_1" />
+              <body name="thumb_tip_pivot1" pos="-0.00023758 -0.0048 -0.0057951">
+                <inertial pos="0.0030186 0.00041289 -0.010567" quat="0.700272 -0.0980743 -0.0980743 0.700272" mass="9.6017e-05" diaginertia="5.94e-09 5.91453e-09 1.03718e-10" />
+                <joint name="thumb_tip_pivot1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+              <body name="thumb_tip_pivot2" pos="-0.00023758 0.0048 -0.0057951">
+                <inertial pos="0.0030185 -0.00041289 -0.010567" quat="0.700276 -0.0980492 -0.0980492 0.700276" mass="9.6016e-05" diaginertia="5.9402e-09 5.91473e-09 1.03712e-10" />
+                <joint name="thumb_tip_pivot2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+            </body>
+          </body>
+          <body name="thumb_coupler1" pos="0.0038085 -0.0064942 0.04" quat="0.984789 0.00106551 0.00604274 -0.173647">
+            <inertial pos="-0.0030185 0.00041289 0.010567" quat="0.700272 -0.0980743 -0.0980743 0.700272" mass="9.6017e-05" diaginertia="5.94e-09 5.91453e-09 1.03718e-10" />
+            <joint name="thumb_coupler1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="thumb_Link3_1" name="thumb_coupler1_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="thumb_Link3_1" contype="0" conaffinity="0" group="1" name="thumb_coupler1_geom_1" />
+          </body>
+          <body name="thumb_coupler2" pos="0.0070919 0.0025268 0.04" quat="0.984789 0.00106551 0.00604274 -0.173647">
+            <inertial pos="-0.0030187 -0.00041289 0.010567" quat="0.700276 -0.0980492 -0.0980492 0.700276" mass="9.6016e-05" diaginertia="5.9402e-09 5.91473e-09 1.03712e-10" />
+            <joint name="thumb_coupler2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="thumb_Link3_2" name="thumb_coupler2_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="thumb_Link3_2" contype="0" conaffinity="0" group="1" name="thumb_coupler2_geom_1" />
+          </body>
+        </body>
+      </body>
+      <body name="index_metacarpal" pos="0.0055 0.0365 0.0728" quat="0.707105 0 0 -0.707108">
+        <inertial pos="0.0022227 -0.00077512 0.0064733" quat="0.999455 0.0143216 0.0171329 -0.0243252" mass="0.0016293" diaginertia="1.02798e-07 8.41903e-08 4.68528e-08" />
+        <joint name="index_metacarpal_joint" pos="0 0 0" axis="0 1 0" range="-0.341 0.341" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="IF_Link4" name="index_metacarpal_geom_0" />
+        <geom type="mesh" mesh="IF_Link4" name="index_metacarpal_geom_1" />
+        <body name="index_proximal" pos="0 0 0.012" quat="0.707105 0 0 0.707108">
+          <inertial pos="-5.2282e-05 -0.0010734 0.020197" quat="0.999966 8.86805e-06 -0.00829636 7.35751e-08" mass="0.0032609" diaginertia="6.24599e-07 6.1032e-07 1.19291e-07" />
+          <joint name="index_proximal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="IF_Link3" name="index_proximal_geom_0" />
+          <geom type="mesh" mesh="IF_Link3" name="index_proximal_geom_1" />
+          <body name="index_middle" pos="0 0 0.04">
+            <inertial pos="0.00023516 -6.8171e-09 0.012478" quat="0.707107 -1.10765e-05 -1.10765e-05 0.707107" mass="0.0012862" diaginertia="1.443e-07 1.4009e-07 2.0757e-08" />
+            <joint name="index_middle_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="IF_Link2" name="index_middle_geom_0" />
+            <geom type="mesh" mesh="IF_Link2" name="index_middle_geom_1" />
+            <body name="index_distal" pos="0 0 0.027">
+              <inertial pos="-0.00039321 -2.2355e-08 0.012437" quat="0.999891 4.06921e-06 -0.0147676 6.00992e-08" mass="0.0011533" diaginertia="2.10789e-07 1.7946e-07 3.95076e-08" />
+              <joint name="index_distal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="IF_Link1" name="index_distal_geom_0" />
+              <geom type="mesh" mesh="IF_Link1" name="index_distal_geom_1" />
+              <body name="index_tip_pivot1" pos="0 -0.0048 -0.0058">
+                <inertial pos="0.0029 0.00041289 -0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+                <joint name="index_tip_pivot1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+              <body name="index_tip_pivot2" pos="0 0.0048 -0.0058">
+                <inertial pos="0.0028999 -0.00041289 -0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+                <joint name="index_tip_pivot2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+            </body>
+          </body>
+          <body name="index_coupler1" pos="0.0058 -0.0048 0.04">
+            <inertial pos="-0.0029 0.00041289 0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+            <joint name="index_coupler1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" name="index_coupler1_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" contype="0" conaffinity="0" group="1" name="index_coupler1_geom_1" />
+          </body>
+          <body name="index_coupler2" pos="0.0058 0.0048 0.04">
+            <inertial pos="-0.0029001 -0.00041289 0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+            <joint name="index_coupler2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" name="index_coupler2_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" contype="0" conaffinity="0" group="1" name="index_coupler2_geom_1" />
+          </body>
+        </body>
+      </body>
+      <body name="middle_metacarpal" pos="0.0055 0.011 0.0818" quat="0.707105 0 0 -0.707108">
+        <inertial pos="0.0021494 -0.00074955 0.0062563" quat="0.999458 0.0143483 0.0171138 -0.0241756" mass="0.0016849" diaginertia="1.02998e-07 8.42746e-08 4.69959e-08" />
+        <joint name="middle_metacarpal_joint" pos="0 0 0" axis="0 1 0" range="-0.341 0.341" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="MF_Link4" name="middle_metacarpal_geom_0" />
+        <geom type="mesh" mesh="MF_Link4" name="middle_metacarpal_geom_1" />
+        <body name="middle_proximal" pos="0 0 0.012" quat="0.707105 0 0 0.707108">
+          <inertial pos="-5.2283e-05 -0.0010734 0.020197" quat="0.999966 8.86693e-06 -0.00829636 7.35658e-08" mass="0.0032609" diaginertia="6.24599e-07 6.1032e-07 1.19291e-07" />
+          <joint name="middle_proximal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="MF_Link3" name="middle_proximal_geom_0" />
+          <geom type="mesh" mesh="MF_Link3" name="middle_proximal_geom_1" />
+          <body name="middle_middle" pos="0 0 0.04">
+            <inertial pos="0.00023516 -6.6871e-09 0.012478" quat="0.707107 -1.10771e-05 -1.10771e-05 0.707107" mass="0.0012862" diaginertia="1.443e-07 1.4009e-07 2.0757e-08" />
+            <joint name="middle_middle_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="MF_Link2" name="middle_middle_geom_0" />
+            <geom type="mesh" mesh="MF_Link2" name="middle_middle_geom_1" />
+            <body name="middle_distal" pos="0 0 0.027">
+              <inertial pos="-0.00039321 -2.2355e-08 0.012437" quat="0.999891 4.06921e-06 -0.0147676 6.00992e-08" mass="0.0011533" diaginertia="2.10789e-07 1.7946e-07 3.95076e-08" />
+              <joint name="middle_distal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="MF_Link1" name="middle_distal_geom_0" />
+              <geom type="mesh" mesh="MF_Link1" name="middle_distal_geom_1" />
+              <body name="middle_tip_pivot1" pos="0 -0.0048 -0.0058">
+                <inertial pos="0.0029 0.00041289 -0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+                <joint name="middle_tip_pivot1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+              <body name="middle_tip_pivot2" pos="0 0.0048 -0.0058">
+                <inertial pos="0.0028999 -0.00041289 -0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+                <joint name="middle_tip_pivot2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+            </body>
+          </body>
+          <body name="middle_coupler1" pos="0.0058 -0.0048 0.04">
+            <inertial pos="-0.0029 0.00041289 0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+            <joint name="middle_coupler1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" name="middle_coupler1_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" contype="0" conaffinity="0" group="1" name="middle_coupler1_geom_1" />
+          </body>
+          <body name="middle_coupler2" pos="0.0058 0.0048 0.04">
+            <inertial pos="-0.0029001 -0.00041289 0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+            <joint name="middle_coupler2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" name="middle_coupler2_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" contype="0" conaffinity="0" group="1" name="middle_coupler2_geom_1" />
+          </body>
+        </body>
+      </body>
+      <body name="ring_metacarpal" pos="0.0055 -0.0145 0.0728" quat="0.707105 0 0 -0.707108">
+        <inertial pos="0.0021494 -0.00074955 0.0062563" quat="0.999458 0.0143483 0.0171138 -0.0241756" mass="0.0016849" diaginertia="1.02998e-07 8.42746e-08 4.69959e-08" />
+        <joint name="ring_metacarpal_joint" pos="0 0 0" axis="0 1 0" range="-0.341 0.341" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="RF_Link4" name="ring_metacarpal_geom_0" />
+        <geom type="mesh" mesh="RF_Link4" name="ring_metacarpal_geom_1" />
+        <body name="ring_proximal" pos="0 0 0.012" quat="0.707105 0 0 0.707108">
+          <inertial pos="-5.2283e-05 -0.0010734 0.020197" quat="0.999966 8.86693e-06 -0.00829636 7.35658e-08" mass="0.0032609" diaginertia="6.24599e-07 6.1032e-07 1.19291e-07" />
+          <joint name="ring_proximal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="RF_Link3" name="ring_proximal_geom_0" />
+          <geom type="mesh" mesh="RF_Link3" name="ring_proximal_geom_1" />
+          <body name="ring_middle" pos="0 0 0.04">
+            <inertial pos="0.00023516 -6.8171e-09 0.012478" quat="0.707107 -1.10765e-05 -1.10765e-05 0.707107" mass="0.0012862" diaginertia="1.443e-07 1.4009e-07 2.0757e-08" />
+            <joint name="ring_middle_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="RF_Link2" name="ring_middle_geom_0" />
+            <geom type="mesh" mesh="RF_Link2" name="ring_middle_geom_1" />
+            <body name="ring_distal" pos="0 0 0.027">
+              <inertial pos="-0.00039321 -2.2355e-08 0.012437" quat="0.999891 4.06921e-06 -0.0147676 6.00992e-08" mass="0.0011533" diaginertia="2.10789e-07 1.7946e-07 3.95076e-08" />
+              <joint name="ring_distal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="RF_Link1" name="ring_distal_geom_0" />
+              <geom type="mesh" mesh="RF_Link1" name="ring_distal_geom_1" />
+              <body name="ring_tip_pivot1" pos="0 -0.0048 -0.0058">
+                <inertial pos="0.0029 0.00041289 -0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+                <joint name="ring_tip_pivot1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+              <body name="ring_tip_pivot2" pos="0 0.0048 -0.0058">
+                <inertial pos="0.0028999 -0.00041289 -0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+                <joint name="ring_tip_pivot2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+            </body>
+          </body>
+          <body name="ring_coupler1" pos="0.0058 -0.0048 0.04">
+            <inertial pos="-0.0029 0.00041289 0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+            <joint name="ring_coupler1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" name="ring_coupler1_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" contype="0" conaffinity="0" group="1" name="ring_coupler1_geom_1" />
+          </body>
+          <body name="ring_coupler2" pos="0.0058 0.0048 0.04">
+            <inertial pos="-0.0029001 -0.00041289 0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+            <joint name="ring_coupler2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" name="ring_coupler2_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" contype="0" conaffinity="0" group="1" name="ring_coupler2_geom_1" />
+          </body>
+        </body>
+      </body>
+      <body name="pinky_metacarpal" pos="0.0055 -0.04 0.0638" quat="0.707105 0 0 -0.707108">
+        <inertial pos="0.0021494 -0.00074955 0.0062563" quat="0.999458 0.0143483 0.0171138 -0.0241756" mass="0.0016849" diaginertia="1.02998e-07 8.42746e-08 4.69959e-08" />
+        <joint name="pinky_metacarpal_joint" pos="0 0 0" axis="0 1 0" range="-0.341 0.341" />
+        <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="LF_Link4" name="pinky_metacarpal_geom_0" />
+        <geom type="mesh" mesh="LF_Link4" name="pinky_metacarpal_geom_1" />
+        <body name="pinky_proximal" pos="0 0 0.012" quat="0.707105 0 0 0.707108">
+          <inertial pos="-5.2283e-05 -0.0010734 0.020197" quat="0.999966 8.86693e-06 -0.00829636 7.35658e-08" mass="0.0032609" diaginertia="6.24599e-07 6.1032e-07 1.19291e-07" />
+          <joint name="pinky_proximal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+          <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="LF_Link3" name="pinky_proximal_geom_0" />
+          <geom type="mesh" mesh="LF_Link3" name="pinky_proximal_geom_1" />
+          <body name="pinky_middle" pos="0 0 0.04">
+            <inertial pos="0.00023516 -6.6871e-09 0.012478" quat="0.707107 -1.10771e-05 -1.10771e-05 0.707107" mass="0.0012862" diaginertia="1.443e-07 1.4009e-07 2.0757e-08" />
+            <joint name="pinky_middle_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="LF_Link2" name="pinky_middle_geom_0" />
+            <geom type="mesh" mesh="LF_Link2" name="pinky_middle_geom_1" />
+            <body name="pinky_distal" pos="0 0 0.027">
+              <inertial pos="-0.00039321 -2.2355e-08 0.012437" quat="0.999891 4.06921e-06 -0.0147676 6.00992e-08" mass="0.0011533" diaginertia="2.10789e-07 1.7946e-07 3.95076e-08" />
+              <joint name="pinky_distal_joint" pos="0 0 0" axis="0 1 0" range="0 1.571" />
+              <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" mesh="LF_Link1" name="pinky_distal_geom_0" />
+              <geom type="mesh" mesh="LF_Link1" name="pinky_distal_geom_1" />
+              <body name="pinky_tip_pivot1" pos="0 -0.0048 -0.0058">
+                <inertial pos="0.0029 0.00041289 -0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+                <joint name="pinky_tip_pivot1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+              <body name="pinky_tip_pivot2" pos="0 0.0048 -0.0058">
+                <inertial pos="0.0028999 -0.00041289 -0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+                <joint name="pinky_tip_pivot2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+              </body>
+            </body>
+          </body>
+          <body name="pinky_coupler1" pos="0.0058 -0.0048 0.04">
+            <inertial pos="-0.0029 0.00041289 0.0106" quat="0.700811 -0.0941496 -0.0941496 0.700811" mass="9.6016e-05" diaginertia="5.9402e-09 5.91477e-09 1.03715e-10" />
+            <joint name="pinky_coupler1_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" name="pinky_coupler1_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_1" contype="0" conaffinity="0" group="1" name="pinky_coupler1_geom_1" />
+          </body>
+          <body name="pinky_coupler2" pos="0.0058 0.0048 0.04">
+            <inertial pos="-0.0029001 -0.00041289 0.0106" quat="0.700815 -0.0941224 -0.0941224 0.700815" mass="9.6016e-05" diaginertia="5.9402e-09 5.91474e-09 1.03728e-10" />
+            <joint name="pinky_coupler2_joint" pos="0 0 0" axis="0 1 0" range="-3.14 3.14" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" density="0" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" name="pinky_coupler2_geom_0" />
+            <geom type="mesh" rgba="0 0.54902 0.85882 1" mesh="IF_Link3_2" contype="0" conaffinity="0" group="1" name="pinky_coupler2_geom_1" />
+          </body>
+        </body>
+      </body>
+    </body>
+  </worldbody>
+  <contact>
+    <exclude body1="hand_base_link" body2="thumb_metacarpal" />
+    <exclude body1="hand_base_link" body2="thumb_proximal" />
+    <exclude body1="hand_base_link" body2="index_metacarpal" />
+    <exclude body1="hand_base_link" body2="index_proximal" />
+    <exclude body1="hand_base_link" body2="middle_metacarpal" />
+    <exclude body1="hand_base_link" body2="middle_proximal" />
+    <exclude body1="hand_base_link" body2="ring_metacarpal" />
+    <exclude body1="hand_base_link" body2="ring_proximal" />
+    <exclude body1="hand_base_link" body2="pinky_metacarpal" />
+    <exclude body1="hand_base_link" body2="pinky_proximal" />
+  </contact>
+  <equality>
+    <connect anchor="0 0 0" body1="thumb_tip_pivot1" body2="thumb_coupler1" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="thumb_tip_pivot2" body2="thumb_coupler2" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="index_tip_pivot1" body2="index_coupler1" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="index_tip_pivot2" body2="index_coupler2" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="middle_tip_pivot1" body2="middle_coupler1" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="middle_tip_pivot2" body2="middle_coupler2" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="ring_tip_pivot1" body2="ring_coupler1" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="ring_tip_pivot2" body2="ring_coupler2" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="pinky_tip_pivot1" body2="pinky_coupler1" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+    <connect anchor="0 0 0" body1="pinky_tip_pivot2" body2="pinky_coupler2" solimp="0.999 0.999 0.0001" solref="0.001 2" />
+  </equality>
+  <actuator>
+    <position name="thumb_distal_joint_position" joint="thumb_distal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="thumb_proximal_joint_position" joint="thumb_proximal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="thumb_metacarpal_joint_position" joint="thumb_metacarpal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="index_distal_joint_position" joint="index_distal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="index_proximal_joint_position" joint="index_proximal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="index_metacarpal_joint_position" joint="index_metacarpal_joint" kp="5" kv="0.1" ctrlrange="-0.341 0.341" forcerange="-1 1" />
+    <position name="middle_distal_joint_position" joint="middle_distal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="middle_proximal_joint_position" joint="middle_proximal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="middle_metacarpal_joint_position" joint="middle_metacarpal_joint" kp="5" kv="0.1" ctrlrange="-0.341 0.341" forcerange="-1 1" />
+    <position name="ring_distal_joint_position" joint="ring_distal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="ring_proximal_joint_position" joint="ring_proximal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="ring_metacarpal_joint_position" joint="ring_metacarpal_joint" kp="5" kv="0.1" ctrlrange="-0.341 0.341" forcerange="-1 1" />
+    <position name="pinky_distal_joint_position" joint="pinky_distal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="pinky_proximal_joint_position" joint="pinky_proximal_joint" kp="5" kv="0.1" ctrlrange="0 1.571" forcerange="-1 1" />
+    <position name="pinky_metacarpal_joint_position" joint="pinky_metacarpal_joint" kp="5" kv="0.1" ctrlrange="-0.341 0.341" forcerange="-1 1" />
+  </actuator>
+</mujoco>

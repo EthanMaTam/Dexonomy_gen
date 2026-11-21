@@ -21,6 +21,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--hand", default="linker_o30_right")
     parser.add_argument("--output", type=Path, default=ROOT / "output/o30_taxonomy_verified/template_atlas.png")
+    parser.add_argument("--azimuth", type=float, default=190,
+                        help="Camera azimuth in degrees")
     args = parser.parse_args()
     directory = ROOT / "assets/hand" / args.hand
     config = load_yaml(str(ROOT / "dexonomy/config/hand" / (args.hand+".yaml")))
@@ -43,7 +45,7 @@ def main():
     mujoco.mjv_defaultCamera(camera)
     camera.lookat[:] = [0.045, 0.005, 0.105]
     camera.distance = .31
-    camera.azimuth = 190
+    camera.azimuth = args.azimuth
     camera.elevation = -12
     with mujoco.Renderer(model, height=300, width=320) as renderer:
         for axis, path in zip(axes.flat, paths):
