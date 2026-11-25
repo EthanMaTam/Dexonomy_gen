@@ -1,0 +1,5 @@
+xml_path: ${asset_root}/hand/zte_hand/right.xml
+color: [0.25, 0.65, 0.9, 1.0]
+arm_hand:
+connect_grasp_limit: 0.0002
+connect_eval_limit: 0.0002

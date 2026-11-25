@@ -12,5 +12,7 @@ output*
 assets/object
 dataset/
 third_party/sharpa-urdf-usd-xml/
+third_party/zte_hand/
+/right_hand_V1.0.zip
 MUJOCO_LOG.TXT
 task/

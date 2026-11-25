@@ -1,0 +1,42 @@
+[
+  {
+    "path": "output/zte_dynamic_guard_regression/shards/0000/log/eval_0/connect_checks/25_Lateral_Tripod/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_17_grasp.npy.json",
+    "physics_success": true,
+    "connect_success": true,
+    "max_connect_error_m": 0.0001764472780900686,
+    "limit_m": 0.0002,
+    "accepted": true
+  },
+  {
+    "path": "output/zte_dynamic_guard_regression/shards/0000/log/eval_0/connect_checks/9_Palmar_Pinch/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_21_grasp.npy.json",
+    "physics_success": true,
+    "connect_success": true,
+    "max_connect_error_m": 0.00010507733866383578,
+    "limit_m": 0.0002,
+    "accepted": true
+  },
+  {
+    "path": "output/zte_dynamic_guard_regression/shards/0000/log/eval_0/connect_checks/16_Lateral/core_bottle_a95db9f4cb692657a09c6a60c6dc420/floating/scale008/0_21_grasp.npy.json",
+    "physics_success": true,
+    "connect_success": true,
+    "max_connect_error_m": 0.00018676095202278264,
+    "limit_m": 0.0002,
+    "accepted": true
+  },
+  {
+    "path": "output/zte_dynamic_guard_regression/shards/0000/log/eval_0/connect_checks/16_Lateral/core_bottle_a95db9f4cb692657a09c6a60c6dc420/floating/scale008/0_19_grasp.npy.json",
+    "physics_success": true,
+    "connect_success": true,
+    "max_connect_error_m": 0.0001904955075143481,
+    "limit_m": 0.0002,
+    "accepted": true
+  },
+  {
+    "path": "output/zte_dynamic_guard_regression/shards/0000/log/eval_0/connect_checks/16_Lateral/ddg_gd_starfruit_poisson_002/floating/scale008/0_1_grasp.npy.json",
+    "physics_success": true,
+    "connect_success": false,
+    "max_connect_error_m": 0.00020588310191450558,
+    "limit_m": 0.0002,
+    "accepted": false
+  }
+]

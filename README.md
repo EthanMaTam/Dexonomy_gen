@@ -28,7 +28,7 @@ Our algorithm synthesizes **contact-rich, penetration-free, and physically plaus
 All starting from just **one** human-annotated template *per hand and grasp type*.
 
 ## Supported Features
-- Hands: Shadow, Allegro, Leap, MANO, Unitree_G1, Sharpa (left), Linker Hand O30 (right)
+- Hands: Shadow, Allegro, Leap, MANO, Unitree_G1, Sharpa (left), Linker Hand O30 (right), ZTE hand (right)
 - Object Scenes: Single (floating & tabletop), Clustered (light clutter)
 - Object Assets: Rigid objects (ShapeNet & Objaverse), Articulated objects (PartNet)
 - Physics Simulator: MuJoCo
@@ -226,7 +226,28 @@ pixi run python -m tools.run_sharpa_dataset --hand linker_o30_right \
 四类在另外六个物体上的成功率从 8.85% 提升到 31.77%；此分数不是全分类成功率。
 详见 [O30 优化报告](assets/hand/linker_o30_right/optimization_report.md)。
 
-### 4. Upstream grasp synthesis
+### 4. ZTE 右手 V1.0
+
+将用户提供的 `right_hand_V1.0.zip` 放在项目根目录，使用包内的闭环 MJCF。
+转换后去掉腕部两轴，保留 40 个关节坐标、15 个执行器和 10 组连接约束。
+原始压缩包和解压资产不纳入 Git，转换器使用 SHA-256 固定输入版本。
+
+```bash
+pixi run python -m tools.prepare_zte_hand
+pixi run python -m tools.annotate_zte_hand
+pixi run python -m tools.check_zte_hand
+pixi run python -m tools.check_hand_assets --hand zte_hand
+pixi run python -m tools.sharpa_template_editor --hand zte_hand --port 8054
+```
+
+覆盖 33 类编号抓取及额外三指模板，共 34 份程序辅助标注；复用 O30 的接触拓扑，
+在 ZTE 自身碰撞凸包上投影，并拟合闭环可行姿态。编辑器仅提供 15 个电机滑块，
+自动求解被动关节。来源、转换差异、验收及查看方法见
+[ZTE 适配说明](assets/hand/zte_hand/README.md)。
+当前缺陷改进、原标注保留验证及尚待改进的类别见
+[当前验收索引](assets/hand/zte_hand/current_validation.md)；历史全库分数单独保留。
+
+### 5. Upstream grasp synthesis
 Run the following commands to synthesize grasps for a specific grasp type:
 ```bash
 dexrun op=tmpl  # Convert human annotations to valid templates

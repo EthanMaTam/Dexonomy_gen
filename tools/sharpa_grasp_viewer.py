@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import threading
 from pathlib import Path
 
@@ -17,8 +18,14 @@ DEFAULT_RESULTS = ROOT / "output/sharpa_tripod_demo_sharpa_left/succ_grasp"
 
 
 class GraspViewer:
-    def __init__(self, result_dir: Path, host: str, port: int, title: str = "Sharpa grasps") -> None:
+    def __init__(self, result_dir: Path, host: str, port: int, title: str = "Sharpa grasps",
+                 validation_csv: Path | None = None) -> None:
         self.result_dir = result_dir
+        self.validation = {}
+        if validation_csv is not None:
+            with validation_csv.open() as stream:
+                self.validation = {(validation_csv.parent/row["path"]).resolve(): row
+                                   for row in csv.DictReader(stream)}
         self.paths = sorted(result_dir.rglob("*.npy"))
         if not self.paths:
             raise FileNotFoundError(f"No successful grasps in {result_dir}")
@@ -86,6 +93,14 @@ class GraspViewer:
             f"**Actual contacts:** {len(points)}  \n"
             f"**Contact bodies:** `{', '.join(sorted(set(contacts['bn1'])))}`"
         )
+        assessment = self.validation.get(data_path.resolve())
+        if assessment is not None:
+            verdict = "合格" if assessment["closed_loop_accepted"] == "True" else "超出工程限值"
+            self.info.content += (f"  \n**闭环检查：** {verdict}  \n"
+                                  f"**最大连接误差：** {1000*float(assessment['max_connect_error_m']):.4f} mm")
+            if assessment.get("max_sampled_dynamic_connect_error_m"):
+                self.info.content += ("  \n**最大动态采样误差：** "
+                                      f"{1000*float(assessment['max_sampled_dynamic_connect_error_m']):.4f} mm")
 
 
 def main() -> None:
@@ -94,8 +109,9 @@ def main() -> None:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8046)
     parser.add_argument("--title", default="Sharpa grasps")
+    parser.add_argument("--validation-csv", type=Path, help="Optional per-sample closed-loop acceptance report")
     args = parser.parse_args()
-    GraspViewer(args.result_dir, args.host, args.port, args.title)
+    GraspViewer(args.result_dir, args.host, args.port, args.title, args.validation_csv)
     print(f"Open http://{args.host}:{args.port}")
     try:
         threading.Event().wait()

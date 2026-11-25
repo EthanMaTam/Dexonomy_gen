@@ -126,7 +126,8 @@ def main():
         job = json.loads(job_path.read_text())
     else:
         raw = output / "raw_anno_snapshot"
-        raw.mkdir()
+        if raw.exists() and not args.resume:
+            parser.error("Incomplete job setup: use --resume with the same options or a new output directory")
         hand_cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{args.hand}.yaml"))
         xml_path = hand_cfg["xml_path"].replace("${asset_root}", str(ROOT / "assets"))
         model = mujoco.MjModel.from_xml_path(str(ROOT / xml_path))
@@ -137,6 +138,12 @@ def main():
             paths = [p for p in paths if p.stem in args.templates]
             assert {p.stem for p in paths} == set(args.templates)
         assert paths
+        raw.mkdir(exist_ok=args.resume)
+        if args.resume:
+            expected = {p.name: p for p in paths}
+            for saved in raw.glob("*.yaml"):
+                if saved.name not in expected or saved.read_bytes() != expected[saved.name].read_bytes():
+                    parser.error("Incomplete setup contains different annotations; use a new output directory")
         for path in paths:
             data = load_yaml(str(path))
             assert len(data["qpos"]) == model.nq and data.get("contact"), path
@@ -152,6 +159,7 @@ def main():
         job = {"started_at": time.time(), "deadline": time.time() + args.hours * 3600,
                "templates": [p.stem for p in paths], "objects": [str(p) for p in objects],
                "model_sha256": hashlib.sha256(Path(xml_path).read_bytes()).hexdigest(),
+               "hand_config_sha256": hashlib.sha256((ROOT/"dexonomy/config/hand"/f"{args.hand}.yaml").read_bytes()).hexdigest(),
                "settings": {k: v for k, v in vars(args).items() if k not in ["output", "resume"]}}
         write_json(job_path, job)
     settings = job["settings"]
@@ -159,6 +167,9 @@ def main():
         hand_cfg = load_yaml(str(ROOT / "dexonomy/config/hand" / f"{settings['hand']}.yaml"))
         model_path = Path(hand_cfg["xml_path"].replace("${asset_root}", str(ROOT / "assets")))
         assert hashlib.sha256(model_path.read_bytes()).hexdigest() == job["model_sha256"], "Hand model changed since job creation"
+    if "hand_config_sha256" in job:
+        config_path = ROOT/"dexonomy/config/hand"/f"{settings['hand']}.yaml"
+        assert hashlib.sha256(config_path.read_bytes()).hexdigest() == job["hand_config_sha256"], "Hand configuration changed since job creation"
     templates = job["templates"]
     environment = {**os.environ, "OMP_NUM_THREADS": "2", "MKL_NUM_THREADS": "2",
                    "MPLCONFIGDIR": "/tmp/dexonomy-matplotlib", "PYTHONUNBUFFERED": "1"}
