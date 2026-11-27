@@ -97,6 +97,9 @@ pixi run python -m tools.sharpa_template_editor --hand linker_o30_right --port 8
 ```
 
 浏览器打开 **http://127.0.0.1:8045**。左侧是 Shadow 参考手，右侧是待编辑的手。
+启动时会加载同名目标模板（若存在）。在 **View** 中用 **Focus target hand** 聚焦右侧手，
+用 **Focus Shadow reference** 聚焦参考手，或用 **Reset view / show both hands** 恢复双手总览。
+聚焦后拖动视图会围绕所选手部中心旋转。
 
 1. 在 **Shadow template** 中选择参考抓取类型；在 **Load linker_o30_right template** 中选择已有目标模板。仅选择 Shadow 参考不会加载右侧目标手的姿态。
 2. 用各手指的关节滑块调整右侧姿态，已有接触点会随指节移动。
@@ -221,6 +224,9 @@ pixi run python -m tools.sharpa_grasp_viewer \
 ```
 
 浏览器打开 **http://127.0.0.1:8046**，选择或切换抓取样本。
+用 **Grasp type** 筛选类别，**Previous grasp / Next grasp** 逐条查看。
+切换样本时自动以当前物体中心为旋转中心，并调整视距以容纳手和物体；
+用 **Reset view / focus object** 恢复默认观察方向。
 查看器需要 `.npy` 抓取结果及导出的 `vis_3d/succ_grasp/` 网格。
 查看其他任务时同时替换手型、输出目录和分片编号。
 远程查看时按编辑器的方法转发 8046 端口。
