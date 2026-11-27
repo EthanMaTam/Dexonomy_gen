@@ -5,6 +5,10 @@
 
 ## O30 适配与实验记录
 
+2026-11-27 起当前编号标注已按 Shadow 整手重建；下述成功率属于重建前历史实验。
+新版的逐类形态对比与生成回归见 [O30 重建报告](../assets/hand/linker_o30_right/retarget_report.md)
+及 [ZTE 当前验收](../assets/hand/zte_hand/current_validation.md)。
+
 
 O30 右手适配复用现有模板编辑器、数据集生成器和抓取查看器。
 官方模型文件名为 `O30i right / 0803`，具有 20 个关节。

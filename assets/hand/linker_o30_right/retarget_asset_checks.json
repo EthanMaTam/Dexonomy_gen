@@ -1,0 +1,172 @@
+{
+  "hand": "linker_o30_right",
+  "nq": 20,
+  "actuators": 20,
+  "templates": [
+    {
+      "name": "10_Power_Disk",
+      "contacts": 11,
+      "max_surface_distance_m": 5.541653437142479e-09
+    },
+    {
+      "name": "11_Power_Sphere",
+      "contacts": 10,
+      "max_surface_distance_m": 3.848912549631843e-09
+    },
+    {
+      "name": "12_Precision_Disk",
+      "contacts": 7,
+      "max_surface_distance_m": 4.579583544924515e-09
+    },
+    {
+      "name": "13_Precision_Sphere",
+      "contacts": 5,
+      "max_surface_distance_m": 3.128943248835183e-09
+    },
+    {
+      "name": "14_Tripod",
+      "contacts": 3,
+      "max_surface_distance_m": 3.932710912574499e-09
+    },
+    {
+      "name": "15_Fixed_Hook",
+      "contacts": 16,
+      "max_surface_distance_m": 3.477792375548017e-09
+    },
+    {
+      "name": "16_Lateral",
+      "contacts": 2,
+      "max_surface_distance_m": 3.9756284537645116e-09
+    },
+    {
+      "name": "17_Index_Finger_Extension",
+      "contacts": 12,
+      "max_surface_distance_m": 4.583005815524079e-09
+    },
+    {
+      "name": "18_Extensior_Type",
+      "contacts": 7,
+      "max_surface_distance_m": 6.865150972497223e-09
+    },
+    {
+      "name": "19_Distal",
+      "contacts": 10,
+      "max_surface_distance_m": 3.3429709495617415e-09
+    },
+    {
+      "name": "1_Large_Diameter",
+      "contacts": 16,
+      "max_surface_distance_m": 8.012056336134234e-09
+    },
+    {
+      "name": "20_Writing_Tripod",
+      "contacts": 4,
+      "max_surface_distance_m": 5.875187483488537e-09
+    },
+    {
+      "name": "21_Tripod_Variation",
+      "contacts": 6,
+      "max_surface_distance_m": 3.1150394147488994e-09
+    },
+    {
+      "name": "22_Parallel_Extension",
+      "contacts": 11,
+      "max_surface_distance_m": 3.745174579983e-09
+    },
+    {
+      "name": "23_Adduction_Grip",
+      "contacts": 4,
+      "max_surface_distance_m": 6.370125910196425e-09
+    },
+    {
+      "name": "24_Tip_Pinch",
+      "contacts": 2,
+      "max_surface_distance_m": 1.8585204085719278e-09
+    },
+    {
+      "name": "25_Lateral_Tripod",
+      "contacts": 3,
+      "max_surface_distance_m": 3.047450657265403e-09
+    },
+    {
+      "name": "26_Sphere_4_Finger",
+      "contacts": 15,
+      "max_surface_distance_m": 4.361811250908432e-09
+    },
+    {
+      "name": "27_Quadpod",
+      "contacts": 4,
+      "max_surface_distance_m": 2.3390787531822293e-09
+    },
+    {
+      "name": "28_Sphere_3_Finger",
+      "contacts": 12,
+      "max_surface_distance_m": 4.6951065239146866e-09
+    },
+    {
+      "name": "29_Stick",
+      "contacts": 13,
+      "max_surface_distance_m": 3.812498509289152e-09
+    },
+    {
+      "name": "2_Small_Diameter",
+      "contacts": 15,
+      "max_surface_distance_m": 2.728552068242632e-09
+    },
+    {
+      "name": "30_Palmar",
+      "contacts": 15,
+      "max_surface_distance_m": 3.4804082985197502e-09
+    },
+    {
+      "name": "31_Ring",
+      "contacts": 7,
+      "max_surface_distance_m": 5.089269118983447e-09
+    },
+    {
+      "name": "32_Ventral",
+      "contacts": 7,
+      "max_surface_distance_m": 3.185122395829548e-09
+    },
+    {
+      "name": "33_Inferior_Pincer",
+      "contacts": 4,
+      "max_surface_distance_m": 3.925256285832762e-09
+    },
+    {
+      "name": "3_Medium_Wrap",
+      "contacts": 16,
+      "max_surface_distance_m": 5.326203012087511e-09
+    },
+    {
+      "name": "4_Adducted_Thumb",
+      "contacts": 11,
+      "max_surface_distance_m": 2.75890181872579e-09
+    },
+    {
+      "name": "5_Light_Tool",
+      "contacts": 13,
+      "max_surface_distance_m": 5.3055142989287245e-09
+    },
+    {
+      "name": "6_Prismatic_4_Finger",
+      "contacts": 5,
+      "max_surface_distance_m": 2.7772483994692636e-09
+    },
+    {
+      "name": "7_Prismatic_3_Finger",
+      "contacts": 4,
+      "max_surface_distance_m": 3.54516762670456e-09
+    },
+    {
+      "name": "8_Prismatic_2_Finger",
+      "contacts": 3,
+      "max_surface_distance_m": 2.7096395296887736e-09
+    },
+    {
+      "name": "9_Palmar_Pinch",
+      "contacts": 2,
+      "max_surface_distance_m": 1.7734240075209525e-09
+    }
+  ]
+}

@@ -18,6 +18,7 @@ from transforms3d.quaternions import mat2quat
 
 from dexonomy.util.file_util import load_yaml
 from tools.viewer_camera import focus_camera
+from tools.hand_frames import display_rotation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -221,7 +222,7 @@ class TemplateEditor:
             "sharpa",
             args.sharpa_xml,
             (args.spacing / 2.0, 0.0, 0.0),
-            display_rotation=(SHARPA_DISPLAY_ROTATION if args.hand == "sharpa_left" else np.eye(3)),
+            display_rotation=display_rotation(args.hand),
         )
         self.server.scene.add_label(
             "/shadow/title", "Shadow reference", position=(0.0, 0.0, 0.23), anchor="center-center"
@@ -263,6 +264,12 @@ class TemplateEditor:
             f"## {self.args.hand} 标注编辑器\n左侧参考，右侧编辑。启用标注后点击右侧手部表面。"
         )
         with self.server.gui.add_folder("View", expand_by_default=True):
+            alignment = self.server.gui.add_checkbox("Align palm with Shadow", True)
+            def set_alignment(event):
+                self.sharpa.display_rotation = display_rotation(self.args.hand) if alignment.value else np.eye(3)
+                self.sharpa.root.wxyz = mat2quat(self.sharpa.display_rotation)
+                self._focus_view(event.client, "both", reset=True)
+            alignment.on_update(set_alignment)
             for label, view in (("Focus target hand", "target"),
                                 ("Focus Shadow reference", "reference"),
                                 ("Reset view / show both hands", "both")):
@@ -287,6 +294,11 @@ class TemplateEditor:
             lambda _: self._load_sharpa_template(self.sharpa_template_dropdown.value)
             if self.sharpa_template_dropdown.value != "(new)"
             else None
+        )
+        self.sync_templates = self.server.gui.add_checkbox("Load matching target template", True)
+        self.sync_templates.on_update(
+            lambda _: setattr(self.sharpa_template_dropdown, "value", self.template_dropdown.value)
+            if self.sync_templates.value and self.template_dropdown.value in self.sharpa_template_by_name else None
         )
         self.annotate_checkbox = self.server.gui.add_checkbox("Contact annotation mode", False)
         self.elastomer_checkbox = self.server.gui.add_checkbox("Elastomer only", self.args.hand == "sharpa_left")
@@ -380,6 +392,8 @@ class TemplateEditor:
                     f"{path}/label", body_name, position=point, font_screen_scale=0.7
                 )
         self.status.content = f"Loaded Shadow template `{name}`"
+        if self.sync_templates.value and name in self.sharpa_template_by_name:
+            self.sharpa_template_dropdown.value = name
 
     def _load_sharpa_template(self, name: str) -> None:
         annotation = load_yaml(str(self.sharpa_template_by_name[name]))
@@ -411,6 +425,8 @@ class TemplateEditor:
                 self._add_contact(body_id, geom_name, point_body, normal_body)
         self.template_name.value = name
         self.status.content = f"Loaded {self.args.hand} template `{name}` ({len(self.contacts)} contacts)"
+        if self.sync_templates.value and name in self.template_by_name:
+            self.template_dropdown.value = name
 
     def _set_sharpa_qpos(self, qpos: np.ndarray) -> None:
         self._updating_sliders = True

@@ -33,5 +33,7 @@
   "replay_sampled_states_within_final_grasp_limit": true,
   "annotations_match_snapshot": true,
   "geometry_check_max_connect_error_m": 4.375846954957254e-08,
-  "source_kinematics_verified_poses": 8
+  "source_kinematics_verified_poses": 8,
+  "applies_to_current_annotations": false,
+  "annotation_snapshot": "annotation_history/2026-11-27_before_shadow_retarget/raw_anno"
 }

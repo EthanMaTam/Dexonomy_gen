@@ -33,7 +33,10 @@ class GraspViewer:
         if not self.paths:
             raise FileNotFoundError(f"No successful grasps in {result_dir}")
         self.server = viser.ViserServer(host=host, port=port, label=title)
+        self.server.scene.world_axes.visible = False
         self.root = None
+        self.contact_points = None
+        self.contact_normals = None
         self.center = np.zeros(3)
         self.bounds = np.zeros((2, 3))
 
@@ -49,6 +52,11 @@ class GraspViewer:
         following.on_click(lambda _: self._step(1))
         reset = self.server.gui.add_button("Reset view / focus object")
         reset.on_click(lambda event: self.focus(event.client, reset=True))
+        with self.server.gui.add_folder("Contact display", expand_by_default=False):
+            self.show_contacts = self.server.gui.add_checkbox("Show contact points", True)
+            self.show_normals = self.server.gui.add_checkbox("Show contact normals", False)
+            self.show_contacts.on_update(lambda _: self._update_contact_visibility())
+            self.show_normals.on_update(lambda _: self._update_contact_visibility())
         self.info = self.server.gui.add_markdown("")
         self.dropdown.on_update(lambda _: self.load(self.path_by_name[self.dropdown.value]))
         self.load(self.paths[0])
@@ -74,10 +82,21 @@ class GraspViewer:
         with self._load_lock:
             self._load(data_path)
 
+    def _update_contact_visibility(self) -> None:
+        with self._load_lock:
+            if self.contact_points is not None:
+                self.contact_points.visible = self.show_contacts.value
+            if self.contact_normals is not None:
+                self.contact_normals.visible = self.show_normals.value
+
     def _load(self, data_path: Path) -> None:
         if self.root is not None:
             self.root.remove()
-        self.root = self.server.scene.add_frame("/result", show_axes=True, axes_length=0.03)
+        # This is only a transform parent. Visible frame axes also create an
+        # origin sphere (default radius 5 cm), which can obscure the object.
+        self.root = self.server.scene.add_frame("/result", show_axes=False)
+        self.contact_points = None
+        self.contact_normals = None
 
         relative = data_path.relative_to(self.result_dir)
         mesh_dir = self.result_dir.parent / "vis_3d/succ_grasp"
@@ -100,20 +119,22 @@ class GraspViewer:
         points = np.asarray(contacts["pos"])
         normals = np.asarray(contacts["normal"])
         if len(points):
-            self.server.scene.add_point_cloud(
+            self.contact_points = self.server.scene.add_point_cloud(
                 "/result/contacts/points",
                 points=points,
                 colors=(255, 70, 70),
-                point_size=0.005,
+                point_size=0.002,
                 point_shape="circle",
+                visible=self.show_contacts.value,
             )
-            self.server.scene.add_arrows(
+            self.contact_normals = self.server.scene.add_arrows(
                 "/result/contacts/normals",
                 points=np.stack([points, points + 0.02 * normals], axis=1),
                 colors=(255, 70, 70),
                 shaft_radius=0.0008,
                 head_radius=0.0025,
                 head_length=0.005,
+                visible=self.show_normals.value,
             )
         bounds = np.vstack([mesh.bounds for mesh in meshes])
         self.bounds = np.stack([bounds.min(axis=0), bounds.max(axis=0)])

@@ -93,6 +93,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--hand", default="sharpa_left", help="Hand configuration name")
+    parser.add_argument("--object-dataset", choices=["DGN_5k", "objaverse_5k"], default="DGN_5k",
+                        help="Preprocessed object collection under assets/object")
     parser.add_argument("--hours", type=float, default=36)
     parser.add_argument("--objects-per-shard", type=int, default=12)
     parser.add_argument("--scales", nargs="+", default=["005", "008", "011"])
@@ -148,7 +150,10 @@ def main():
             data = load_yaml(str(path))
             assert len(data["qpos"]) == model.nq and data.get("contact"), path
             shutil.copy2(path, raw / path.name)
-        objects = sorted(p for p in (ROOT / "assets/object/DGN_5k/scene_cfg").iterdir()
+        scene_root = ROOT / "assets/object" / args.object_dataset / "scene_cfg"
+        if not scene_root.is_dir():
+            parser.error(f"Object scenes missing: {scene_root}; download and extract the preprocessed dataset")
+        objects = sorted(p for p in scene_root.iterdir()
                          if p.is_dir() and all((p / "floating" / f"scale{s}.npy").is_file()
                                               for s in args.scales))
         random.Random(20261107).shuffle(objects)

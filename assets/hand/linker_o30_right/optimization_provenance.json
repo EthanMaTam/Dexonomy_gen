@@ -72,5 +72,7 @@
       "heldout_optimized_percent": 15.277777777777779,
       "accepted": true
     }
-  ]
+  ],
+  "applies_to_current_annotations": false,
+  "annotation_snapshot": "annotation_history/2026-11-27_before_shadow_retarget/raw_anno"
 }
