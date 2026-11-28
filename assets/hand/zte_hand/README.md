@@ -1,9 +1,10 @@
 # ZTE 右手 V1.0
 
 当前库包含 33 类编号抓取及 `fingertip_large`，共 34 份程序辅助标注。
-分阶段证据覆盖 **29/33 类**；Distal、Tripod Variation、Stick、Ventral 仍需改进。
-[当前验收索引](current_validation.md) 区分首次全库、独立物体验证和修复回归，
-这些结果不合并计算为一次新的全库成功率。分类语义及实物表现仍待人工确认。
+2026-11-27 已将 33 类编号标注直接从 Shadow 整手重建，并修正编辑器的 90° 掌面显示偏差。
+`fingertip_large` 保留为独立实验种子。[当前验收索引](current_validation.md) 报告本版的形态偏差和小规模回归。
+旧版 **29/33 类**证据及完整标注备份于 `annotation_history/2026-11-27_before_shadow_retarget/`，
+不能作为本版的全库成功率。分类语义及实物表现仍待人工确认。
 
 ## 模型来源与转换
 
@@ -53,25 +54,25 @@ pixi run python -m tools.check_hand_assets --hand zte_hand
   后三项是单位外法向。
 - `required_cbody`：如存在，则保存必须满足的接触分组。
 
-初始标注复用 O30 的接触拓扑，在 ZTE 自身碰撞凸包上投影，并用有界拟合、
-自碰撞惩罚和闭环约束求解姿态。O30 关节角未直接复制；部分参考姿态无法精确重现，
-最大参考点拟合误差约 76 mm。来源和拟合记录见 `taxonomy_provenance.json`，模型指纹见
-`taxonomy_metadata.json`。后续优化记录保存在各条目的 `last_optimization` 中。
+编号标注直接读取 Shadow，拟合全部手指的指节方向、指腹朝向和接触相对布局，
+包括没有接触标注的手指；在 ZTE 碰撞凸包上重定位接触，并求解闭环及自碰撞约束。
+不再经过 O30 级联迁移。模型与 YAML 均保留原生坐标，只有显示根节点旋转至 Shadow 掌面。
+来源和哈希见 `taxonomy_provenance.json`、`taxonomy_metadata.json`；逐类形态偏差见 [重建报告](retarget_report.md)。
 
 需要补齐缺失标注时运行以下命令；默认保留已有文件：
 
 ```bash
-git submodule update --init third_party/linkerhand-urdf
 pixi run python -m tools.annotate_zte_hand
 MUJOCO_GL=egl pixi run python -m tools.render_hand_templates --hand zte_hand \
-  --output output/zte_hand_validation/template_atlas.png
+  --output output/shadow_retarget/zte_hand/template_atlas.png
 pixi run python -m tools.sharpa_template_editor --hand zte_hand --port 8054
 ```
 
-O30 子模块仅在迁移标注时需要。浏览器打开 `http://127.0.0.1:8054`，左侧为 Shadow
+直接迁移只需要 Shadow 与 ZTE 资产。浏览器打开 `http://127.0.0.1:8054`，左侧为 Shadow
 参考，右侧为 ZTE。编辑器提供 15 个电机滑块并求解被动关节，拒绝无法闭合的目标；
 保存时保留必要接触分组。接触点绑定到指节随关节移动，避免直接修改 YAML 角度而
 保留旧接触坐标。标注检查要求连接误差小于 **0.02 mm**。
+**Align palm with Shadow** 默认开启；**Load matching target template** 同步两侧类别。
 
 `skeleton.yaml`、`body_group.yaml` 和空的 `keypoint.yaml` 由转换器生成。本库直接保存
 六维接触坐标，不使用整数关键点引用。编辑器可通过 `--check` 检查资产后退出。
@@ -121,6 +122,8 @@ pixi run python -m tools.sharpa_grasp_viewer \
 
 ## 已验收结果和边界
 
+以下为重建前标注的历史实验；本版状态以 [当前验收索引](current_validation.md) 为准。
+
 | 阶段 | 结果 | 证据 |
 | --- | --- | --- |
 | 初始种子回归 | 72 个候选、19 个有效抓取、17 个仿真成功 | 本地 `output/zte_hand_smoke/` |
@@ -130,7 +133,7 @@ pixi run python -m tools.sharpa_grasp_viewer \
 | 原闭环超限修复 | 两例最终误差约 0.18 mm，生成与外力回归通过；动态复跑最大约 0.1765 mm | `closure_repair_provenance.json` |
 | 动态拒绝回归 | 五个真实夹具中四个通过，一个约 0.206 mm 的超限样本被正确拒绝 | `dynamic_guard_regression.json` |
 
-原 342 个合格姿态经新投影函数检查后逐坐标未变。当前分阶段证据覆盖 29/33 类；
+原 342 个合格姿态经新投影函数检查后逐坐标未变。重建前分阶段证据覆盖 29/33 类；
 Distal、Tripod Variation、Stick、Ventral 本轮仍无可靠独立证据。收拢候选未通过独立
 复验，未发布。原 26 类尚未按新增动态规则逐例全量重算，也未做实物验收。
 首次基线与后续实验不能混算成功率；[交叉验证](cross_validation.md) 同样保留为历史基线。
@@ -149,18 +152,18 @@ Distal、Tripod Variation、Stick、Ventral 本轮仍无可靠独立证据。收
 | `tools.select_zte_candidates` | 仅按调参结果冻结选择；`--rest` 用于收拢实验 |
 | `tools.repair_zte_grasps` | 在独立输出中修复超限结果，并重做原检查及外力评估 |
 | `tools.report_zte_optimization` | 独立 A/B 汇总；满足条件后才用 `--apply` 发布 |
-| `tools.report_zte_current` | 汇总原库与已发布标注的分阶段证据 |
+| `tools.report_zte_current` | 汇总当前整手重建报告及本版生成回归，不沿用旧标注成功证据 |
 
 完整选择器需要对应实验缓存：接触实验使用 `screen`、`cylinder/screen`、
 `additional_distal/screen`，收拢实验使用 `train`、`spread/train`。冻结候选再与原标注在
 不重叠物体上分别验证；第二轮收拢实验使用另一组六个新物体。历史数据未纳入 Git，
 新工作区需要源模型及基线运行结果才能完整复现。各工具提供 `--help`。
 
-10 个逐例动态审计合格的改进、补充验证和修复样本可汇集审阅，不用于计算全库成功率：
+旧版 10 个逐例动态审计合格的改进、补充验证和修复样本可汇集历史审阅，不代表当前库：
 
 ```bash
 pixi run python -m tools.report_zte_current
-pixi run python -m tools.build_zte_review
+pixi run python -m tools.build_zte_review --historical
 pixi run python -m dexonomy.main op=v3d hand=zte_hand \
   save_dir=output/zte_improvement_review/shards/0000 n_worker=1 op.n_max=0 op.hand.mode=collision
 pixi run python -m tools.sharpa_grasp_viewer \

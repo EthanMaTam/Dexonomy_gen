@@ -12,6 +12,8 @@ import numpy as np
 import trimesh
 import viser
 
+from tools.viewer_camera import focus_camera
+
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_RESULTS = ROOT / "output/sharpa_tripod_demo_sharpa_left/succ_grasp"
@@ -21,6 +23,7 @@ class GraspViewer:
     def __init__(self, result_dir: Path, host: str, port: int, title: str = "Sharpa grasps",
                  validation_csv: Path | None = None) -> None:
         self.result_dir = result_dir
+        self._load_lock = threading.RLock()
         self.validation = {}
         if validation_csv is not None:
             with validation_csv.open() as stream:
@@ -30,25 +33,70 @@ class GraspViewer:
         if not self.paths:
             raise FileNotFoundError(f"No successful grasps in {result_dir}")
         self.server = viser.ViserServer(host=host, port=port, label=title)
+        self.server.scene.world_axes.visible = False
         self.root = None
+        self.contact_points = None
+        self.contact_normals = None
         self.center = np.zeros(3)
+        self.bounds = np.zeros((2, 3))
 
         names = [str(path.relative_to(result_dir).with_suffix("")) for path in self.paths]
         self.path_by_name = dict(zip(names, self.paths))
+        templates = sorted({name.split("/")[0] for name in names})
+        self.template_filter = self.server.gui.add_dropdown("Grasp type", ["(all)", *templates])
         self.dropdown = self.server.gui.add_dropdown("Successful grasp", names)
+        self.template_filter.on_update(lambda _: self._filter_paths())
+        previous = self.server.gui.add_button("Previous grasp")
+        following = self.server.gui.add_button("Next grasp")
+        previous.on_click(lambda _: self._step(-1))
+        following.on_click(lambda _: self._step(1))
+        reset = self.server.gui.add_button("Reset view / focus object")
+        reset.on_click(lambda event: self.focus(event.client, reset=True))
+        with self.server.gui.add_folder("Contact display", expand_by_default=False):
+            self.show_contacts = self.server.gui.add_checkbox("Show contact points", True)
+            self.show_normals = self.server.gui.add_checkbox("Show contact normals", False)
+            self.show_contacts.on_update(lambda _: self._update_contact_visibility())
+            self.show_normals.on_update(lambda _: self._update_contact_visibility())
         self.info = self.server.gui.add_markdown("")
         self.dropdown.on_update(lambda _: self.load(self.path_by_name[self.dropdown.value]))
         self.load(self.paths[0])
 
         @self.server.on_client_connect
         def _(client: viser.ClientHandle) -> None:
-            client.camera.look_at = self.center
-            client.camera.position = self.center + np.asarray([0.28, -0.28, 0.20])
+            self.focus(client, reset=True)
+
+    def focus(self, client, *, reset=False) -> None:
+        if client is not None:
+            focus_camera(client, self.bounds, target=self.center, reset=reset)
+
+    def _filter_paths(self) -> None:
+        selected = self.template_filter.value
+        self.dropdown.options = [name for name in self.path_by_name
+                                 if selected == "(all)" or name.split("/")[0] == selected]
+
+    def _step(self, delta: int) -> None:
+        options = list(self.dropdown.options)
+        self.dropdown.value = options[(options.index(self.dropdown.value) + delta) % len(options)]
 
     def load(self, data_path: Path) -> None:
+        with self._load_lock:
+            self._load(data_path)
+
+    def _update_contact_visibility(self) -> None:
+        with self._load_lock:
+            if self.contact_points is not None:
+                self.contact_points.visible = self.show_contacts.value
+            if self.contact_normals is not None:
+                self.contact_normals.visible = self.show_normals.value
+
+    def _load(self, data_path: Path) -> None:
         if self.root is not None:
             self.root.remove()
-        self.root = self.server.scene.add_frame("/result", show_axes=True, axes_length=0.03)
+        # This is only a transform parent. Visible frame axes also create an
+        # origin sphere (default radius 5 cm), which can obscure the object.
+        self.root = self.server.scene.add_frame("/result", show_axes=False)
+        self.contact_points = None
+        self.contact_normals = None
 
         relative = data_path.relative_to(self.result_dir)
         mesh_dir = self.result_dir.parent / "vis_3d/succ_grasp"
@@ -71,23 +119,28 @@ class GraspViewer:
         points = np.asarray(contacts["pos"])
         normals = np.asarray(contacts["normal"])
         if len(points):
-            self.server.scene.add_point_cloud(
+            self.contact_points = self.server.scene.add_point_cloud(
                 "/result/contacts/points",
                 points=points,
                 colors=(255, 70, 70),
-                point_size=0.005,
+                point_size=0.002,
                 point_shape="circle",
+                visible=self.show_contacts.value,
             )
-            self.server.scene.add_arrows(
+            self.contact_normals = self.server.scene.add_arrows(
                 "/result/contacts/normals",
                 points=np.stack([points, points + 0.02 * normals], axis=1),
                 colors=(255, 70, 70),
                 shaft_radius=0.0008,
                 head_radius=0.0025,
                 head_length=0.005,
+                visible=self.show_normals.value,
             )
         bounds = np.vstack([mesh.bounds for mesh in meshes])
-        self.center = (bounds.min(axis=0) + bounds.max(axis=0)) / 2.0
+        self.bounds = np.stack([bounds.min(axis=0), bounds.max(axis=0)])
+        self.center = meshes[1].bounds.mean(axis=0)
+        for client in self.server.get_clients().values():
+            self.focus(client)
         self.info.content = (
             f"**Result:** `{data_path.name}`  \n"
             f"**Actual contacts:** {len(points)}  \n"

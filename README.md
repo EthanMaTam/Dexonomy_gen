@@ -97,8 +97,13 @@ pixi run python -m tools.sharpa_template_editor --hand linker_o30_right --port 8
 ```
 
 浏览器打开 **http://127.0.0.1:8045**。左侧是 Shadow 参考手，右侧是待编辑的手。
+启动时会加载同名目标模板（若存在）。在 **View** 中用 **Focus target hand** 聚焦右侧手，
+用 **Focus Shadow reference** 聚焦参考手，或用 **Reset view / show both hands** 恢复双手总览。
+聚焦后拖动视图会围绕所选手部中心旋转。
+O30、ZTE 默认通过 **Align palm with Shadow** 对齐原生坐标中相差 90° 的掌面；
+该操作只改变显示。**Load matching target template** 默认开启，切换 Shadow 类别会同步加载同名目标标注。
 
-1. 在 **Shadow template** 中选择参考抓取类型；在 **Load linker_o30_right template** 中选择已有目标模板。仅选择 Shadow 参考不会加载右侧目标手的姿态。
+1. 在 **Shadow template** 或 **Load linker_o30_right template** 中选择抓取类型，默认同步另一侧的同名模板；关闭 **Load matching target template** 后可独立选择两侧模板。
 2. 用各手指的关节滑块调整右侧姿态，已有接触点会随指节移动。
 3. 勾选 **Contact annotation mode**，点击右侧手表面添加接触点。用 **Undo last contact** 撤销最后一点，或 **Clear contacts** 清空；法向箭头应指向表面外侧。Sharpa 默认的 **Elastomer only** 会将选点限制在弹性接触面。
 4. 设置 **Output template name**，例如 `my_tripod`（仅字母、数字、下划线和连字符，不带 `.yaml`）。修改已有同名模板时，需勾选 **Allow overwrite**。
@@ -144,6 +149,15 @@ ssh -L 8045:127.0.0.1:8045 username@server
 下载 `DGN_5k_processed.tar.gz`，将解压后的 `DGN_5k` 文件夹放到
 `assets/object/DGN_5k/`，使其包含 `processed_data/`、`scene_cfg/` 和 `valid_split/`。
 生成器默认从 `assets/object/DGN_5k/scene_cfg/` 读取物体场景。
+
+同一数据页还提供 `objaverse_5k_processed.tar.gz`，解压后的 `objaverse_5k` 放到
+`assets/object/objaverse_5k/`；运行生成器时加 `--object-dataset objaverse_5k`。
+可保留在 `dataset/` 并用符号链接接入 `assets/object/`。两套 `*_vision.tar.gz` 用于网络训练，生成抓取无需下载。
+
+2026-11-27 起，O30、ZTE 的 33 类编号标注已直接从 Shadow 整手重建，包含非接触手指姿态。
+原库及其验证报告保存在各手型的 `annotation_history/2026-11-27_before_shadow_retarget/`；
+历史成功率不适用于新标注，详见 [O30 重建报告](assets/hand/linker_o30_right/retarget_report.md) 和
+[ZTE 重建报告](assets/hand/zte_hand/retarget_report.md)。
 
 物体数据不随 Git 下载；编辑模板无需准备物体数据。
 
@@ -221,9 +235,22 @@ pixi run python -m tools.sharpa_grasp_viewer \
 ```
 
 浏览器打开 **http://127.0.0.1:8046**，选择或切换抓取样本。
+用 **Grasp type** 筛选类别，**Previous grasp / Next grasp** 逐条查看。
+切换样本时自动以当前物体中心为旋转中心，并调整视距以容纳手和物体；
+用 **Reset view / focus object** 恢复默认观察方向。
+默认隐藏坐标轴和原点球；**Contact display** 中可开关接触点与法向箭头。
+接触点使用较小红点显示，法向箭头默认关闭，便于检查手与物体的接触位置。
 查看器需要 `.npy` 抓取结果及导出的 `vis_3d/succ_grasp/` 网格。
 查看其他任务时同时替换手型、输出目录和分片编号。
 远程查看时按编辑器的方法转发 8046 端口。
+
+已有 ZTE 整批审阅数据时，可同时打开 DGN 与 Objaverse 的分类、物体和尺度筛选视图：
+
+```bash
+pixi run python -m tools.zte_grasp_review --batch output/zte_review_20261127
+```
+
+默认地址为 `http://127.0.0.1:8062` 和 `http://127.0.0.1:8063`。
 
 若没有成功样本，先检查 `run.log` 和分片 `log/` 是否报错；流程完成但成功数为零时，
 再检查模板接触点，或增加 `--points`、更换物体后在新目录重跑。

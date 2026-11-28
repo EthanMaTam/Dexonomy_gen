@@ -38,7 +38,15 @@ def main():
     parser.add_argument("--max-evaluations", type=int, default=180)
     parser.add_argument("--templates", nargs="+")
     parser.add_argument("--output", type=Path, default=DESTINATION / "raw_anno")
+    parser.add_argument("--legacy-contact-only", action="store_true", help="Reproduce historical O30-to-ZTE contact-only migration")
     args = parser.parse_args()
+    if not args.legacy_contact_only:
+        from tools.retarget_shadow_annotations import main as retarget
+        options=["--hand", "zte_hand", "--output", str(args.output),
+                 "--max-evaluations", str(args.max_evaluations), "--skip-existing"]
+        if args.templates: options += ["--templates", *args.templates]
+        retarget(options)
+        return
     source_directory = ROOT / "assets/hand/linker_o30_right"
     source = mujoco.MjModel.from_xml_path(str(source_directory / "right.xml"))
     target = mujoco.MjModel.from_xml_path(str(DESTINATION / "right.xml"))

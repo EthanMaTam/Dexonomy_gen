@@ -17,6 +17,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repair-run", default="output/zte_grasp_repair_verified")
     args = parser.parse_args()
+    if (DESTINATION/"retarget_report.json").exists():
+        from tools.report_shadow_retarget import write_report
+        run=ROOT/"output/shadow_retarget/zte_generation_smoke"
+        write_report("zte_hand",run if (run/"summary.csv").exists() else None)
+        return
     archive = DESTINATION/"annotation_history/2026-11-21_before_optimization"
     baseline = {r["template"]: r for r in csv.DictReader((archive/"taxonomy_validation.csv").open())}
     geometry = {r["name"]: r for r in json.loads((ROOT/"output/zte_annotation_tuning/published_asset_checks.json").read_text())["templates"]}

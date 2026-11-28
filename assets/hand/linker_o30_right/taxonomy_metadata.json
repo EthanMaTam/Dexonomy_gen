@@ -1,0 +1,49 @@
+{
+  "source_hand": "shadow",
+  "target_hand": "linker_o30_right",
+  "source_model_sha256": "558852d62a72b388e38bbb7555e55055df5aa7cc0433447ce16e5adf974a0a07",
+  "target_model_sha256": "222ee0f09f7ea802a3ece973b47bd82db47fe50e347132cfa03283867b25e79f",
+  "method": "whole-hand bone directions, pad orientation, contact-relative geometry, collision and loop constraints",
+  "annotation_version": "2026-11-27_shadow_whole_hand",
+  "contact_body_map": {
+    "rh_ffproximal": "index_proximal",
+    "rh_ffmiddle": "index_middle",
+    "rh_ffdistal": "index_distal",
+    "rh_mfproximal": "middle_proximal",
+    "rh_mfmiddle": "middle_middle",
+    "rh_mfdistal": "middle_distal",
+    "rh_rfproximal": "ring_proximal",
+    "rh_rfmiddle": "ring_middle",
+    "rh_rfdistal": "ring_distal",
+    "rh_lfproximal": "pinky_proximal",
+    "rh_lfmiddle": "pinky_middle",
+    "rh_lfdistal": "pinky_distal",
+    "rh_palm": "hand_base_link",
+    "rh_lfmetacarpal": "pinky_metacarpals",
+    "rh_thproximal": "thumb_metacarpals_base2",
+    "rh_thmiddle": "thumb_proximal",
+    "rh_thdistal": "thumb_distal"
+  },
+  "annotation_coordinates": "native hand base coordinates; metres, outward unit normals, radians",
+  "display_native_to_shadow": [
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "program_generated": true,
+  "human_classification_review_complete": false,
+  "numbered_templates": 33,
+  "extra_template": "fingertip_large: preserved experimental seed, outside the Shadow taxonomy"
+}

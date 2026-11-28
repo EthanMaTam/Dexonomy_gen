@@ -1,0 +1,53 @@
+{
+  "repairs": [
+    {
+      "source": "output/zte_hand_validation/shards/0000/succ_grasp/25_Lateral_Tripod/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_17_grasp.npy",
+      "source_sha256": "adaddd48bd3cfdd089338bb1cb64ffab5552ed55ba5a2bfc1bcfd1c65502c3ea",
+      "template": "25_Lateral_Tripod",
+      "old_connect_error_m": 0.00023637425957921579,
+      "grasp_motor_targets_unchanged": true,
+      "original_grasp_filters_passed": true,
+      "max_coordinate_change_rad": 0.009938612444393258,
+      "original_pregrasp_filters_passed": true,
+      "new_connect_error_m": 0.00017999999861046778,
+      "repaired_path": "output/zte_grasp_repair_verified/shards/0000/grasp_data/25_Lateral_Tripod/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_17_grasp.npy",
+      "physics_success": true
+    },
+    {
+      "source": "output/zte_hand_validation/shards/0000/succ_grasp/9_Palmar_Pinch/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_21_grasp.npy",
+      "source_sha256": "a2d3cdf6b87192d93b99f4e3b5146512665881083d47d7138e1794f2c72e5fda",
+      "template": "9_Palmar_Pinch",
+      "old_connect_error_m": 0.00020157816040005346,
+      "grasp_motor_targets_unchanged": true,
+      "original_grasp_filters_passed": true,
+      "max_coordinate_change_rad": 0.003806125118499995,
+      "original_pregrasp_filters_passed": true,
+      "new_connect_error_m": 0.0001800000136868737,
+      "repaired_path": "output/zte_grasp_repair_verified/shards/0000/grasp_data/9_Palmar_Pinch/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_21_grasp.npy",
+      "physics_success": true
+    }
+  ],
+  "replay": {
+    "model_sha256": "69f26f9206d57dda14720e2fd5bd1c3a75ad2f566389b767f2a18ef113ce8c8a",
+    "method": "每类取按路径排序的首个成功抓取，最多 count 类；同一六方向外力评估，在每次 step_sim 后采样连接误差",
+    "count": 2,
+    "all_replayed_physics_successful": true,
+    "max_connect_error_m": 0.0001764472780900686,
+    "records": [
+      {
+        "template": "25_Lateral_Tripod",
+        "path": "output/zte_grasp_repair_verified/shards/0000/grasp_data/25_Lateral_Tripod/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_17_grasp.npy",
+        "max_connect_error_m": 0.0001764472780900686,
+        "sampled_simulation_states": 270,
+        "physics_success": true
+      },
+      {
+        "template": "9_Palmar_Pinch",
+        "path": "output/zte_grasp_repair_verified/shards/0000/grasp_data/9_Palmar_Pinch/sem_Camera_6c478f3b08323fef8f257ecba9a6ef8/floating/scale005/0_21_grasp.npy",
+        "max_connect_error_m": 0.00010507733866383578,
+        "sampled_simulation_states": 270,
+        "physics_success": true
+      }
+    ]
+  }
+}

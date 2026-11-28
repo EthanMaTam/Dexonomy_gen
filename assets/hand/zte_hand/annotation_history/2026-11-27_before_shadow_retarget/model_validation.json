@@ -1,0 +1,14 @@
+{
+  "source_archive_sha256": "86453deb218dd653c7c1572cc1a19fd8f67f7d138a88c10e01dc1610289b25a4",
+  "model_sha256": "69f26f9206d57dda14720e2fd5bd1c3a75ad2f566389b767f2a18ef113ce8c8a",
+  "nq": 40,
+  "actuators": 15,
+  "connect_equalities": 10,
+  "source_kinematics_verified_poses": 8,
+  "max_position_error_m": 1.3877787807814457e-16,
+  "max_rotation_matrix_error": 1.2212453270876722e-15,
+  "connect_jacobian_max_error": 1.3877787807814457e-10,
+  "rest_pose_self_collision_free": true,
+  "cross_finger_self_collision_enabled": true,
+  "structural_exclusions": 10
+}

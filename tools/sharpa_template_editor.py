@@ -17,6 +17,8 @@ from ruamel.yaml import YAML
 from transforms3d.quaternions import mat2quat
 
 from dexonomy.util.file_util import load_yaml
+from tools.viewer_camera import focus_camera
+from tools.hand_frames import display_rotation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -91,6 +93,7 @@ class HandView:
         self.visual_handles: dict[int, object] = {}
         self.collision_handles: dict[int, object] = {}
         self.collision_meshes: dict[int, trimesh.Trimesh] = {}
+        self.visual_bounds: dict[int, np.ndarray] = {}
 
         mujoco.mj_forward(self.model, self.data)
         for geom_id in range(self.model.ngeom):
@@ -113,6 +116,7 @@ class HandView:
                 )
                 continue
             rgba = self.model.geom_rgba[geom_id]
+            self.visual_bounds[geom_id] = mesh.bounds.copy()
             color = tuple(int(255 * channel) for channel in rgba[:3])
             geom_name = self.model.geom(geom_id).name or f"geom_{geom_id}"
             self.visual_handles[geom_id] = server.scene.add_mesh_simple(
@@ -141,6 +145,23 @@ class HandView:
             self.data.xpos[body_id].copy(),
             self.data.xmat[body_id].reshape(3, 3).copy(),
         )
+
+    def world_bounds(self) -> np.ndarray:
+        """Bounds in display coordinates, including root rotation and offset."""
+        points = []
+        bounds_by_geom = self.visual_bounds or {
+            geom_id: mesh.bounds for geom_id, mesh in self.collision_meshes.items()
+        }
+        for geom_id, bounds in bounds_by_geom.items():
+            corners = np.asarray([
+                [x, y, z] for x in bounds[:, 0]
+                for y in bounds[:, 1] for z in bounds[:, 2]
+            ])
+            rotation = self.data.geom_xmat[geom_id].reshape(3, 3)
+            local = corners @ rotation.T + self.data.geom_xpos[geom_id]
+            points.append(local @ self.display_rotation.T + np.asarray(self.root.position))
+        points = np.vstack(points)
+        return np.stack([points.min(axis=0), points.max(axis=0)])
 
     def raycast(
         self, ray_origin_world: np.ndarray, ray_direction: np.ndarray, elastomer_only: bool
@@ -201,7 +222,7 @@ class TemplateEditor:
             "sharpa",
             args.sharpa_xml,
             (args.spacing / 2.0, 0.0, 0.0),
-            display_rotation=(SHARPA_DISPLAY_ROTATION if args.hand == "sharpa_left" else np.eye(3)),
+            display_rotation=display_rotation(args.hand),
         )
         self.server.scene.add_label(
             "/shadow/title", "Shadow reference", position=(0.0, 0.0, 0.23), anchor="center-center"
@@ -216,6 +237,22 @@ class TemplateEditor:
         self._updating_sliders = False
         self._build_gui()
         self._load_shadow_template(self.template_dropdown.value)
+        if self.sharpa_template_dropdown.value != "(new)":
+            self._load_sharpa_template(self.sharpa_template_dropdown.value)
+
+        @self.server.on_client_connect
+        def _(client: viser.ClientHandle) -> None:
+            self._focus_view(client, "both", reset=True)
+
+    def _focus_view(self, client, view="target", *, reset=False) -> None:
+        if client is None:
+            return
+        bounds = [hand.world_bounds() for hand in (
+            (self.shadow, self.sharpa) if view == "both" else
+            (self.shadow,) if view == "reference" else (self.sharpa,)
+        )]
+        points = np.vstack(bounds)
+        focus_camera(client, np.stack([points.min(axis=0), points.max(axis=0)]), reset=reset)
 
     def _build_gui(self) -> None:
         template_paths = sorted(self.args.shadow_templates.glob("*.yaml"))
@@ -226,6 +263,18 @@ class TemplateEditor:
         self.server.gui.add_markdown(
             f"## {self.args.hand} 标注编辑器\n左侧参考，右侧编辑。启用标注后点击右侧手部表面。"
         )
+        with self.server.gui.add_folder("View", expand_by_default=True):
+            alignment = self.server.gui.add_checkbox("Align palm with Shadow", True)
+            def set_alignment(event):
+                self.sharpa.display_rotation = display_rotation(self.args.hand) if alignment.value else np.eye(3)
+                self.sharpa.root.wxyz = mat2quat(self.sharpa.display_rotation)
+                self._focus_view(event.client, "both", reset=True)
+            alignment.on_update(set_alignment)
+            for label, view in (("Focus target hand", "target"),
+                                ("Focus Shadow reference", "reference"),
+                                ("Reset view / show both hands", "both")):
+                button = self.server.gui.add_button(label)
+                button.on_click(lambda event, v=view: self._focus_view(event.client, v, reset=True))
         self.template_dropdown = self.server.gui.add_dropdown(
             "Shadow template", list(self.template_by_name), initial_value="14_Tripod"
             if "14_Tripod" in self.template_by_name
@@ -237,12 +286,19 @@ class TemplateEditor:
         sharpa_paths = sorted(self.args.output_dir.glob("*.yaml"))
         self.sharpa_template_by_name = {path.stem: path for path in sharpa_paths}
         self.sharpa_template_dropdown = self.server.gui.add_dropdown(
-            f"Load {self.args.hand} template", ["(new)", *self.sharpa_template_by_name]
+            f"Load {self.args.hand} template", ["(new)", *self.sharpa_template_by_name],
+            initial_value=self.template_dropdown.value
+            if self.template_dropdown.value in self.sharpa_template_by_name else "(new)",
         )
         self.sharpa_template_dropdown.on_update(
             lambda _: self._load_sharpa_template(self.sharpa_template_dropdown.value)
             if self.sharpa_template_dropdown.value != "(new)"
             else None
+        )
+        self.sync_templates = self.server.gui.add_checkbox("Load matching target template", True)
+        self.sync_templates.on_update(
+            lambda _: setattr(self.sharpa_template_dropdown, "value", self.template_dropdown.value)
+            if self.sync_templates.value and self.template_dropdown.value in self.sharpa_template_by_name else None
         )
         self.annotate_checkbox = self.server.gui.add_checkbox("Contact annotation mode", False)
         self.elastomer_checkbox = self.server.gui.add_checkbox("Elastomer only", self.args.hand == "sharpa_left")
@@ -336,6 +392,8 @@ class TemplateEditor:
                     f"{path}/label", body_name, position=point, font_screen_scale=0.7
                 )
         self.status.content = f"Loaded Shadow template `{name}`"
+        if self.sync_templates.value and name in self.sharpa_template_by_name:
+            self.sharpa_template_dropdown.value = name
 
     def _load_sharpa_template(self, name: str) -> None:
         annotation = load_yaml(str(self.sharpa_template_by_name[name]))
@@ -367,6 +425,8 @@ class TemplateEditor:
                 self._add_contact(body_id, geom_name, point_body, normal_body)
         self.template_name.value = name
         self.status.content = f"Loaded {self.args.hand} template `{name}` ({len(self.contacts)} contacts)"
+        if self.sync_templates.value and name in self.template_by_name:
+            self.template_dropdown.value = name
 
     def _set_sharpa_qpos(self, qpos: np.ndarray) -> None:
         self._updating_sliders = True

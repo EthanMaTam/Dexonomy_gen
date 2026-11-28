@@ -1,0 +1,20 @@
+[
+  {
+    "template": "24_Tip_Pinch",
+    "method": "bounded IK against a virtual sphere",
+    "radius_m": 0.018,
+    "max_pad_fit_error_m": 1.9230282098314143e-07
+  },
+  {
+    "template": "14_Tripod",
+    "method": "bounded IK against a virtual sphere",
+    "radius_m": 0.025,
+    "max_pad_fit_error_m": 0.009166255345247818
+  },
+  {
+    "template": "fingertip_large",
+    "method": "bounded IK against a virtual sphere",
+    "radius_m": 0.045,
+    "max_pad_fit_error_m": 0.009046483367788374
+  }
+]

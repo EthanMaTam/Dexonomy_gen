@@ -61,5 +61,7 @@
     }
   ],
   "published_group_baseline_qualified": 3,
-  "published_group_optimized_qualified": 3
+  "published_group_optimized_qualified": 3,
+  "applies_to_current_annotations": false,
+  "annotation_snapshot": "annotation_history/2026-11-27_before_shadow_retarget/raw_anno"
 }

@@ -1,5 +1,11 @@
 # Linker Hand O30 右手适配说明
 
+2026-11-27 已将 33 类编号标注直接从 Shadow 整手重建，包含非接触手指的姿态；
+编辑器默认对齐两手掌面，修正原生坐标相差 90° 的显示偏差。模型及标注坐标保持原生定义。
+本版逐类形态对比与小规模生成回归见 [重建报告](retarget_report.md)。
+此前的完整标注与报告保存在 `annotation_history/2026-11-27_before_shadow_retarget/`；
+历史 509 个成功样本及四类 31.77% 独立验证成功率不适用于本版。
+
 官方模型文件名为 **O30i right / 0803**，来源为
 [厂商模型仓库](https://github.com/linker-bot/linkerhand-urdf)，固定提交：
 `49f26021b0a91ff5c33150df22970c07bb548672`。
@@ -49,11 +55,11 @@ O30 厂商仓库含其他型号，模型工作区约 467 MB（另有 Git 历史�
 | `raw_anno/14_Tripod.yaml` | 三指抓取 | 拇指、食指、中指 |
 | `raw_anno/fingertip_large.yaml` | 较大三指抓取 | 拇指、食指、中指 |
 
-上表 3 份是最初生成并验证的种子模板，在首次全库验证时没有修改；其中 14、24 类随后完成了独立验证优化，见文末。其余 31 类由 Shadow 标注
-自动迁移而来。全部属于程序辅助生成的初始标注，分类名称沿用源库；
+上表记录历史种子的来源。当前 33 类编号模板（含 14、24）均直接依据 Shadow 整手重建，
+只有未编号的 `fingertip_large` 保留为独立实验种子。全部属于程序辅助标注，分类名称沿用源库；
 几何和物理验证不能替代人工对分类语义的确认。
 
-全部类别的接触数量与逐类评估结果见 [全分类验证表](taxonomy_validation.md)，
+重建前类别的接触数量与逐类评估结果见 [历史全分类验证表](taxonomy_validation.md)，
 可下载的机器可读表为 `taxonomy_validation.csv`。迁移来源、哈希与拟合误差记录在
 `taxonomy_provenance.json`。
 
@@ -103,7 +109,8 @@ contact:
 
 以 `assets/hand/shadow/raw_anno/` 中的 33 类编号模板作为参考，保留抓取类型、
 接触指节和严格接触分组；通过解剖连杆对应关系，将接触点投影到 O30 的实际碰撞凸包。
-再用有界姿态拟合及自碰撞惩罚调整关节角，最后重新计算手基座坐标下的接触位置和外法向。
+再拟合全部手指的指节方向、指腹朝向与接触相对布局，包含没有接触点的手指，
+结合有界姿态拟合及自碰撞惩罚调整关节角，最后重新计算手基座坐标下的接触位置和外法向。
 O30 与 Shadow 的自由度不同，尤其小指掌骨、拇指结构不能一一对应；相关近似已记录。
 
 此过程默认不覆盖任何已有 YAML，重复执行也保留原有迁移记录：
@@ -114,7 +121,8 @@ pixi run python -m tools.check_hand_assets --hand linker_o30_right
 MUJOCO_GL=egl pixi run python -m tools.render_hand_templates
 ```
 
-总览图位于 `output/o30_taxonomy_verified/template_atlas.png`。该图显示初始姿态及橙色
+总览图位于 `output/shadow_retarget/linker_o30_right/template_atlas.png`，默认与 Shadow 掌面对齐。
+加 `--native-frame` 可查看厂商原生朝向。该图显示初始姿态及橙色
 接触法向，不能代替动力学验证。全分类小规模生成命令如下：
 
 ```bash
@@ -145,6 +153,7 @@ pixi run python -m tools.sharpa_template_editor --hand linker_o30_right --port 8
 ```
 
 浏览器打开 `http://127.0.0.1:8048`，在目标手模板下拉框中选择现有模板。
+**Align palm with Shadow** 默认对齐两侧掌面，**Load matching target template** 默认同步同名类别。
 编辑器复用 Shadow 参考手，支持 20 个关节滑块、表面接触点拾取、法向调整和标注保存。
 O30 没有 Sharpa 的弹性体命名，因此默认关闭仅拾取弹性体的过滤选项。
 
@@ -228,7 +237,7 @@ O30 使用 ±1 Nm 仿真假设，因此不能只归因于标注。完整报告�
 再用另外六个不重叠物体验证。四类合计从 51/576（8.85%）提高到
 183/576（31.77%）。这不是全 26 类的分数，不能与上面的整体分数直接比较。
 
-四类候选均写入当前 `raw_anno/`，接触指节集合及数量、力矩限制和评估阈值不变；
+四类候选曾写入重建前的 `raw_anno/`，该快照现已归档；当时接触指节集合及数量、力矩限制和评估阈值不变；
 独立验证前后逐类结果见 [优化报告](optimization_report.md)。Palmar 只增加了
 3 个成功样本，提升较小，仍需扩大样本验证。原标注可在
 `annotation_history/2026-11-10_before_optimization/` 找到，发布记录为

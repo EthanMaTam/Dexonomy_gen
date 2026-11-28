@@ -16,9 +16,13 @@ from tools.prepare_zte_hand import ROOT, DESTINATION
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT/"output/zte_improvement_review")
+    parser.add_argument("--historical", action="store_true", help="Explicitly review pre-retarget historical experiments")
     args = parser.parse_args(); output = args.output.resolve()
+    if (DESTINATION/"retarget_report.json").exists() and not args.historical:
+        parser.error("当前库已从 Shadow 整手重建；本工具只汇集旧实验。历史审阅请加 --historical，新结果请查看当前生成任务的 succ_grasp。")
     if output.exists(): parser.error("查看输出已存在，请使用新目录")
-    current = {r["template"]: r for r in json.loads((DESTINATION/"current_validation.json").read_text())["records"]}
+    index = DESTINATION/"annotation_history/2026-11-27_before_shadow_retarget/current_validation.json" if args.historical else DESTINATION/"current_validation.json"
+    current = {r["template"]: r for r in json.loads(index.read_text())["records"]}
     model = mujoco.MjModel.from_xml_path(str(DESTINATION/"right.xml")); state = mujoco.MjData(model)
     rows = []
 

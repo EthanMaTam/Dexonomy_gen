@@ -1,0 +1,65 @@
+{
+  "model_sha256": "69f26f9206d57dda14720e2fd5bd1c3a75ad2f566389b767f2a18ef113ce8c8a",
+  "method": "每类取按路径排序的首个成功抓取，最多 count 类；同一六方向外力评估，在每次 step_sim 后采样连接误差",
+  "count": 8,
+  "all_replayed_physics_successful": true,
+  "max_connect_error_m": 0.00018294780966312215,
+  "records": [
+    {
+      "template": "10_Power_Disk",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/10_Power_Disk/core_bottle_5979870763de5ced4c8b72e8da0e65c5/floating/scale011/0_9_grasp.npy",
+      "max_connect_error_m": 4.9887966773964966e-05,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "11_Power_Sphere",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/11_Power_Sphere/core_bottle_5979870763de5ced4c8b72e8da0e65c5/floating/scale008/0_21_grasp.npy",
+      "max_connect_error_m": 0.00011245164978125984,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "12_Precision_Disk",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/12_Precision_Disk/ddg_gd_mushroom_poisson_014/floating/scale011/0_16_grasp.npy",
+      "max_connect_error_m": 9.370006064149249e-05,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "13_Precision_Sphere",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/13_Precision_Sphere/core_bottle_5979870763de5ced4c8b72e8da0e65c5/floating/scale005/0_10_grasp.npy",
+      "max_connect_error_m": 6.34514199754898e-05,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "14_Tripod",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/14_Tripod/core_bottle_5979870763de5ced4c8b72e8da0e65c5/floating/scale011/0_11_grasp.npy",
+      "max_connect_error_m": 5.4341821972407796e-05,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "15_Fixed_Hook",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/15_Fixed_Hook/core_mug_1ea9ea99ac8ed233bf355ac8109b9988/floating/scale008/0_0_grasp.npy",
+      "max_connect_error_m": 0.00018294780966312215,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "17_Index_Finger_Extension",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/17_Index_Finger_Extension/core_bottle_5979870763de5ced4c8b72e8da0e65c5/floating/scale008/0_21_grasp.npy",
+      "max_connect_error_m": 0.00010312474230215401,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    },
+    {
+      "template": "18_Extensior_Type",
+      "path": "output/zte_hand_validation/shards/0000/grasp_data/18_Extensior_Type/core_mug_1ea9ea99ac8ed233bf355ac8109b9988/floating/scale008/0_2_grasp.npy",
+      "max_connect_error_m": 0.00013109413312559687,
+      "sampled_simulation_states": 270,
+      "physics_success": true
+    }
+  ]
+}

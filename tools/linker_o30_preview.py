@@ -136,8 +136,8 @@ def main() -> None:
 
     @server.on_client_connect
     def configure_camera(client) -> None:
-        client.camera.look_at = center
         client.camera.position = center + np.asarray([0.30, -0.35, 0.22])
+        client.camera.look_at = center
 
     print(f"Open http://{args.host}:{args.port}", flush=True)
     threading.Event().wait()

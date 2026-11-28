@@ -50,7 +50,19 @@ def local_meshes(model, data):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--max-evaluations", type=int, default=200)
+    parser.add_argument("--output", type=Path, default=ROOT / "assets/hand/linker_o30_right/raw_anno")
+    parser.add_argument("--templates", nargs="+")
+    parser.add_argument("--legacy-contact-only", action="store_true", help="Reproduce historical contact-only migration")
     args = parser.parse_args()
+    if not args.legacy_contact_only:
+        from tools.retarget_shadow_annotations import main as retarget
+        options=["--hand", "linker_o30_right", "--output", str(args.output),
+                 "--max-evaluations", str(args.max_evaluations), "--skip-existing"]
+        if args.templates: options += ["--templates", *args.templates]
+        retarget(options)
+        return
+    if args.output != ROOT / "assets/hand/linker_o30_right/raw_anno" or args.templates:
+        parser.error("Legacy mode only supports the historical output and full taxonomy")
     directory = ROOT / "assets/hand/linker_o30_right"
     source_directory = ROOT / "assets/hand/shadow"
     source = mujoco.MjModel.from_xml_path(str(source_directory / "right.xml"))

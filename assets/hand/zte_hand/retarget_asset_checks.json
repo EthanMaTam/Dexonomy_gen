@@ -1,0 +1,233 @@
+{
+  "hand": "zte_hand",
+  "nq": 40,
+  "actuators": 15,
+  "templates": [
+    {
+      "name": "10_Power_Disk",
+      "contacts": 11,
+      "max_surface_distance_m": 3.8812622716189354e-09,
+      "max_connect_error_m": 3.3311514427915115e-09
+    },
+    {
+      "name": "11_Power_Sphere",
+      "contacts": 10,
+      "max_surface_distance_m": 3.7734146964092395e-09,
+      "max_connect_error_m": 1.2536060290899014e-09
+    },
+    {
+      "name": "12_Precision_Disk",
+      "contacts": 7,
+      "max_surface_distance_m": 2.6239486176641097e-09,
+      "max_connect_error_m": 1.2213272243776081e-09
+    },
+    {
+      "name": "13_Precision_Sphere",
+      "contacts": 5,
+      "max_surface_distance_m": 5.0771602072762e-09,
+      "max_connect_error_m": 1.429332652893678e-09
+    },
+    {
+      "name": "14_Tripod",
+      "contacts": 3,
+      "max_surface_distance_m": 2.05254839676858e-09,
+      "max_connect_error_m": 1.3200427730696204e-09
+    },
+    {
+      "name": "15_Fixed_Hook",
+      "contacts": 16,
+      "max_surface_distance_m": 3.804936037900903e-09,
+      "max_connect_error_m": 1.4821424057345262e-10
+    },
+    {
+      "name": "16_Lateral",
+      "contacts": 2,
+      "max_surface_distance_m": 1.8654147926334475e-09,
+      "max_connect_error_m": 2.674373780300551e-09
+    },
+    {
+      "name": "17_Index_Finger_Extension",
+      "contacts": 12,
+      "max_surface_distance_m": 3.371087340255486e-09,
+      "max_connect_error_m": 1.3063109472921224e-09
+    },
+    {
+      "name": "18_Extensior_Type",
+      "contacts": 7,
+      "max_surface_distance_m": 6.026475388063172e-09,
+      "max_connect_error_m": 3.6228724184432535e-09
+    },
+    {
+      "name": "19_Distal",
+      "contacts": 10,
+      "max_surface_distance_m": 2.2345569179738067e-09,
+      "max_connect_error_m": 3.0224466214612347e-09
+    },
+    {
+      "name": "1_Large_Diameter",
+      "contacts": 16,
+      "max_surface_distance_m": 5.874748354450925e-09,
+      "max_connect_error_m": 1.8188332069949532e-09
+    },
+    {
+      "name": "20_Writing_Tripod",
+      "contacts": 4,
+      "max_surface_distance_m": 3.862594212718653e-09,
+      "max_connect_error_m": 4.122331508517969e-09
+    },
+    {
+      "name": "21_Tripod_Variation",
+      "contacts": 6,
+      "max_surface_distance_m": 2.7008661034919814e-09,
+      "max_connect_error_m": 2.304807112886541e-09
+    },
+    {
+      "name": "22_Parallel_Extension",
+      "contacts": 11,
+      "max_surface_distance_m": 3.6559116044515777e-09,
+      "max_connect_error_m": 1.0975728833961711e-10
+    },
+    {
+      "name": "23_Adduction_Grip",
+      "contacts": 4,
+      "max_surface_distance_m": 2.4341260362232735e-09,
+      "max_connect_error_m": 1.428093003412513e-09
+    },
+    {
+      "name": "24_Tip_Pinch",
+      "contacts": 2,
+      "max_surface_distance_m": 1.0029025061476734e-09,
+      "max_connect_error_m": 2.6189298003920118e-09
+    },
+    {
+      "name": "25_Lateral_Tripod",
+      "contacts": 3,
+      "max_surface_distance_m": 4.447822414540735e-09,
+      "max_connect_error_m": 2.6514657923731243e-09
+    },
+    {
+      "name": "26_Sphere_4_Finger",
+      "contacts": 15,
+      "max_surface_distance_m": 3.659332447780482e-09,
+      "max_connect_error_m": 1.5637685036480177e-09
+    },
+    {
+      "name": "27_Quadpod",
+      "contacts": 4,
+      "max_surface_distance_m": 3.846767714748009e-09,
+      "max_connect_error_m": 2.1605513055935115e-09
+    },
+    {
+      "name": "28_Sphere_3_Finger",
+      "contacts": 12,
+      "max_surface_distance_m": 2.3165417093676737e-09,
+      "max_connect_error_m": 7.46392724402524e-10
+    },
+    {
+      "name": "29_Stick",
+      "contacts": 13,
+      "max_surface_distance_m": 4.374110112672911e-09,
+      "max_connect_error_m": 9.138689567188745e-10
+    },
+    {
+      "name": "2_Small_Diameter",
+      "contacts": 15,
+      "max_surface_distance_m": 2.9648726945774584e-09,
+      "max_connect_error_m": 3.069407772449371e-09
+    },
+    {
+      "name": "30_Palmar",
+      "contacts": 15,
+      "max_surface_distance_m": 4.170168094522296e-09,
+      "max_connect_error_m": 6.119611300410503e-11
+    },
+    {
+      "name": "31_Ring",
+      "contacts": 7,
+      "max_surface_distance_m": 2.84126425512129e-09,
+      "max_connect_error_m": 1.0289268223749462e-09
+    },
+    {
+      "name": "32_Ventral",
+      "contacts": 7,
+      "max_surface_distance_m": 1.4795552699685146e-09,
+      "max_connect_error_m": 4.4973021233095264e-10
+    },
+    {
+      "name": "33_Inferior_Pincer",
+      "contacts": 4,
+      "max_surface_distance_m": 2.423199632030146e-09,
+      "max_connect_error_m": 1.5853260720086818e-10
+    },
+    {
+      "name": "3_Medium_Wrap",
+      "contacts": 16,
+      "max_surface_distance_m": 3.6583350734957275e-09,
+      "max_connect_error_m": 3.0103574459226894e-09
+    },
+    {
+      "name": "4_Adducted_Thumb",
+      "contacts": 11,
+      "max_surface_distance_m": 2.8870025769596583e-09,
+      "max_connect_error_m": 6.791279556923996e-10
+    },
+    {
+      "name": "5_Light_Tool",
+      "contacts": 13,
+      "max_surface_distance_m": 2.75496860914499e-09,
+      "max_connect_error_m": 1.332807690395134e-09
+    },
+    {
+      "name": "6_Prismatic_4_Finger",
+      "contacts": 5,
+      "max_surface_distance_m": 3.4064046999814993e-09,
+      "max_connect_error_m": 3.2018871486240975e-09
+    },
+    {
+      "name": "7_Prismatic_3_Finger",
+      "contacts": 4,
+      "max_surface_distance_m": 4.74942514483737e-09,
+      "max_connect_error_m": 3.2112928403376558e-09
+    },
+    {
+      "name": "8_Prismatic_2_Finger",
+      "contacts": 3,
+      "max_surface_distance_m": 1.77690843983338e-09,
+      "max_connect_error_m": 3.1715455253161167e-09
+    },
+    {
+      "name": "9_Palmar_Pinch",
+      "contacts": 2,
+      "max_surface_distance_m": 1.3502086314838354e-09,
+      "max_connect_error_m": 1.044644580467825e-11
+    }
+  ],
+  "passive_joints": [
+    "thumb_middle_joint",
+    "thumb_tip_pivot1_joint",
+    "thumb_tip_pivot2_joint",
+    "thumb_coupler1_joint",
+    "thumb_coupler2_joint",
+    "index_middle_joint",
+    "index_tip_pivot1_joint",
+    "index_tip_pivot2_joint",
+    "index_coupler1_joint",
+    "index_coupler2_joint",
+    "middle_middle_joint",
+    "middle_tip_pivot1_joint",
+    "middle_tip_pivot2_joint",
+    "middle_coupler1_joint",
+    "middle_coupler2_joint",
+    "ring_middle_joint",
+    "ring_tip_pivot1_joint",
+    "ring_tip_pivot2_joint",
+    "ring_coupler1_joint",
+    "ring_coupler2_joint",
+    "pinky_middle_joint",
+    "pinky_tip_pivot1_joint",
+    "pinky_tip_pivot2_joint",
+    "pinky_coupler1_joint",
+    "pinky_coupler2_joint"
+  ],
+  "connect_equalities": 10
+}
